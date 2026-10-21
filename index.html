@@ -130,7 +130,42 @@
       </article>
     </section>
 
-    <section class="note" id="register">
+    <
+<section class="note" id="register">
+  <h2>ثبت‌نام در کلاس‌های مهارتی</h2>
+  <p>اطلاعات زیر را وارد کن تا درخواست ثبت‌نامت ثبت شود.</p>
+
+  <form id="registration-form">
+    <label for="student_name">نام و نام خانوادگی نوجوان</label><br>
+    <input id="student_name" name="student_name" required maxlength="100"><br><br>
+
+    <label for="grade">پایه تحصیلی</label><br>
+    <select id="grade" name="grade" required>
+      <option value="">انتخاب پایه</option>
+      <option value="هفتم">هفتم</option>
+      <option value="هشتم">هشتم</option>
+      <option value="نهم">نهم</option>
+      <option value="دهم">دهم</option>
+      <option value="یازدهم">یازدهم</option>
+      <option value="دوازدهم">دوازدهم</option>
+    </select><br><br>
+
+    <label for="phone">شماره تماس</label><br>
+    <input id="phone" name="phone" type="tel" required maxlength="20"><br><br>
+
+    <label for="guardian_name">نام ولی یا سرپرست</label><br>
+    <input id="guardian_name" name="guardian_name" required maxlength="100"><br><br>
+
+    <label for="course_id">کلاس موردنظر</label><br>
+    <select id="course_id" name="course_id" required>
+      <option value="">انتخاب کلاس</option>
+    </select><br><br>
+
+    <button type="submit">ثبت درخواست</button>
+    <p id="form-message" role="status"></p>
+  </form>
+</section>
+>
       <h2>ثبت‌نام در کلاس‌ها</h2>
       <p>
         سامانه ثبت‌نام در مرحله راه‌اندازی است.
