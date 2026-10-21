@@ -1,0 +1,65 @@
+
+const form = document.getElementById("registration-form");
+const courseSelect = document.getElementById("course_id");
+const message = document.getElementById("form-message");
+
+async function startRegistrationApp() {
+  if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
+    message.textContent = "اتصال سامانه هنوز تنظیم نشده است.";
+    return;
+  }
+
+  const client = window.supabase.createClient(
+    window.SUPABASE_URL,
+    window.SUPABASE_ANON_KEY
+  );
+
+  const { data: courses, error } = await client
+    .from("courses")
+    .select("id, title")
+    .order("id");
+
+  if (error) {
+    message.textContent = "دریافت کلاس‌ها انجام نشد. تنظیمات دسترسی را بررسی کنید.";
+    return;
+  }
+
+  for (const course of courses || []) {
+    const option = document.createElement("option");
+    option.value = course.id;
+    option.textContent = course.title;
+    courseSelect.appendChild(option);
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    message.textContent = "در حال ارسال درخواست...";
+
+    const record = {
+      student_name: document.getElementById("student_name").value.trim(),
+      grade: document.getElementById("grade").value,
+      phone: document.getElementById("phone").value.trim(),
+      guardian_name: document.getElementById("guardian_name").value.trim(),
+      course_id: courseSelect.value
+    };
+
+    if (Object.values(record).some(value => !value)) {
+      message.textContent = "لطفاً همه فیلدها را تکمیل کن.";
+      return;
+    }
+
+    const { error: insertError } = await client
+      .from("registrations")
+      .insert([record]);
+
+    if (insertError) {
+      message.textContent = "ثبت‌نام انجام نشد. تنظیمات دسترسی یا اطلاعات را بررسی کنید.";
+      return;
+    }
+
+    form.reset();
+    message.textContent = "درخواست ثبت‌نام با موفقیت ارسال شد.";
+  });
+}
+
+startRegistrationApp();
