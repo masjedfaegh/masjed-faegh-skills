@@ -20,7 +20,7 @@ async function startRegistrationApp() {
 
   const { data: courses, error } = await client
     .from("courses")
-    .select("id, title")
+  .select("id, title, description")
     .eq("is_active", true)
     .order("title");
 
