@@ -1,192 +1,192 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>پایگاه مهارت‌آموزی نوجوانان مسجد فائق</title>
-  <meta name="description" content="ثبت‌نام در کلاس‌های مهارتی نوجوانان مسجد فائق">
+  <meta name="description" content="معرفی و ثبت‌نام کلاس‌های مهارتی نوجوانان مسجد فائق">
   <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Tahoma, Arial, sans-serif;
-      background: #f5f7f2;
-      color: #183c32;
-      line-height: 1.9;
-    }
-    header {
-      background: #123d32;
-      color: white;
-      padding: 18px 7%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    header strong { font-size: 19px; }
-    header a { color: white; text-decoration: none; }
-    .hero {
-      padding: 65px 7%;
-      background: linear-gradient(135deg, #174d3c, #26765a);
-      color: white;
-      text-align: center;
-    }
-    .hero h1 { font-size: clamp(27px, 5vw, 44px); margin: 0 0 15px; }
-    .hero p { max-width: 650px; margin: 0 auto 25px; }
-    .button {
-      display: inline-block;
-      background: #f3c969;
-      color: #173a2f;
-      text-decoration: none;
-      padding: 11px 24px;
-      border-radius: 12px;
-      font-weight: bold;
-    }
-    main { max-width: 1100px; margin: auto; padding: 35px 18px; }
-    h2 { margin-top: 0; }
-    .intro { text-align: center; margin-bottom: 28px; }
-    .courses {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 18px;
-    }
-    .course {
-      background: white;
-      border: 1px solid #e0e9e1;
-      border-radius: 18px;
-      padding: 23px;
-      box-shadow: 0 5px 18px #183c320c;
-    }
-    .course .emoji { font-size: 35px; }
-    .course h3 { margin: 7px 0; }
-    .course p { color: #52675e; font-size: 14px; }
-    .course a {
-      display: inline-block;
-      background: #1c684d;
-      color: white;
-      text-decoration: none;
-      padding: 9px 15px;
-      border-radius: 9px;
-    }
-    .note {
-      background: #e5eee5;
-      border-radius: 14px;
-      padding: 18px;
-      margin-top: 28px;
-    }
-    footer {
-      text-align: center;
-      background: #123d32;
-      color: white;
-      padding: 24px 15px;
-      margin-top: 35px;
-      font-size: 14px;
-    }
+    :root{--green:#075b45;--green2:#0b7656;--mint:#e9f8ef;--gold:#f4cb67;--ink:#18382f;--muted:#5b7068;--white:#fff;--line:#dce9e1}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f6faf7;color:var(--ink);line-height:1.9}
+    a{color:inherit}
+    .wrap{width:min(1120px,92%);margin:auto}
+    header{background:var(--green);color:#fff;position:sticky;top:0;z-index:5;box-shadow:0 4px 18px #082e241c}
+    .nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:12px 0}
+    .brand{font-weight:800;font-size:18px}
+    nav{display:flex;gap:18px;flex-wrap:wrap}
+    nav a{text-decoration:none;font-size:14px;color:#f0fff6}
+    .hero{background:linear-gradient(90deg,rgba(3,65,59,.98) 0%,rgba(3,65,59,.92) 42%,rgba(3,65,59,.25) 72%,rgba(3,65,59,.06) 100%),url('./masjed-faegh.jpg') center right/cover no-repeat;color:#fff;padding:66px 0 60px;overflow:hidden}
+    .hero-grid{display:grid;grid-template-columns:1.35fr .65fr;align-items:center;gap:30px}
+    .eyebrow{display:inline-block;background:#ffffff1c;border:1px solid #ffffff45;border-radius:99px;padding:5px 13px;font-size:13px}
+    h1{font-size:clamp(29px,5vw,46px);line-height:1.5;margin:14px 0}
+    .hero p{max-width:680px;color:#e7fff1;margin:0 0 24px}
+    .btn{display:inline-block;text-decoration:none;border:0;border-radius:12px;padding:11px 20px;font-weight:bold;cursor:pointer;font-family:inherit}
+    .btn-gold{background:var(--gold);color:#16392e}
+    .btn-light{background:#fff;color:var(--green)}
+    .hero-mark{border:1px solid #ffffff4a;background:#ffffff12;border-radius:26px;padding:28px;text-align:center}
+    .hero-mark .symbol{font-size:66px;line-height:1.3}
+    .hero-mark strong{display:block;font-size:20px}
+    section{padding:48px 0}
+    .section-head{text-align:center;max-width:720px;margin:0 auto 28px}
+    .section-head h2{margin:0 0 7px;font-size:clamp(23px,3vw,32px)}
+    .section-head p{margin:0;color:var(--muted)}
+    .course-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .course-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 8px 25px #123b2b08;display:flex;flex-direction:column;min-height:250px}
+    .course-icon{width:54px;height:54px;border-radius:16px;background:var(--mint);display:grid;place-items:center;font-size:27px;margin-bottom:12px}
+    .course-card h3{margin:0 0 8px;font-size:20px}
+    .course-card p{color:var(--muted);margin:0 0 18px;font-size:14px}
+    .course-card .btn{margin-top:auto;text-align:center;background:var(--green);color:#fff}
+    .note{font-size:13px;color:var(--muted);text-align:center;margin:16px 0 0}
+    .schedule{background:var(--mint)}
+    .schedule-box{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:620px}
+    th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+    th{background:#d3f1df;color:#174c3a}
+    tr:last-child td{border-bottom:0}
+    .form-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:25px;align-items:start}
+    .info-panel{background:var(--green);color:#fff;padding:25px;border-radius:20px}
+    .info-panel p{color:#e0f4e8}
+    .form-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px}
+    .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    label{display:block;font-size:14px;font-weight:bold;margin-bottom:5px}
+    input,select{width:100%;border:1px solid #cbdcd1;border-radius:10px;padding:12px;background:#fff;font-family:inherit;font-size:14px;color:var(--ink)}
+    .field-full{grid-column:1/-1}
+    .consent{display:flex;gap:9px;align-items:flex-start;font-weight:normal;font-size:13px;margin:16px 0}
+    .consent input{width:auto;margin-top:7px}
+    #form-message{font-size:14px;font-weight:bold;margin-top:12px}
+    footer{background:#073e30;color:#e6f8ed;padding:28px 0;text-align:center;font-size:13px}
+    @media(max-width:760px){.hero-grid,.form-layout{grid-template-columns:1fr}.hero-mark{display:none}.course-grid{grid-template-columns:1fr}.fields{grid-template-columns:1fr}nav{gap:12px}.nav{justify-content:center;text-align:center}.hero{padding:48px 0}}
   </style>
 </head>
 <body>
-  <header>
-    <strong>🕌 مهارت‌آموزی مسجد فائق</strong>
-    <a href="#classes">کلاس‌های مهارتی</a>
-  </header>
+<header>
+  <div class="wrap nav">
+    <div class="brand">پایگاه مهارت‌آموزی نوجوانان مسجد فائق</div>
+    <nav aria-label="ناوبری اصلی">
+      <a href="#courses">کلاس‌های مهارتی</a>
+      <a href="#schedule">برنامه حضور مجموعه</a>
+      <a href="#register">ثبت‌نام</a>
+    </nav>
+  </div>
+</header>
 
-  <section class="hero">
-    <h1>استعدادت را کشف کن؛ مهارتت را بساز!</h1>
-    <p>
-      پایگاه مهارت‌آموزی نوجوانان مسجد فائق؛
-      فرصتی برای یادگیری، تجربه، خلاقیت و رشد در کنار دوستان.
-    </p>
-    <a class="button" href="#classes">مشاهده کلاس‌ها و ثبت‌نام</a>
-  </section>
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">یادگیری • تجربه • مهارت</span>
+      <h1>مهارت یاد بگیر؛<br>توانایی‌ات را به کار بگیر</h1>
+      <p>در پایگاه مهارت‌آموزی نوجوانان مسجد فائق، فرصت آشنایی با مهارت‌های کاربردی و ثبت‌نام در دوره‌های آموزشی را پیدا کن.</p>
+      <a class="btn btn-gold" href="#courses">مشاهده کلاس‌ها</a>
+      <a class="btn btn-light" href="#register" style="margin-right:8px">ثبت‌نام در کلاس</a>
+    </div>
+    <div class="hero-mark" aria-hidden="true">
+      <div class="symbol">✦</div>
+      <strong>استعدادت را کشف کن</strong>
+      <div>مسجد فائق؛ محیطی برای رشد و یادگیری</div>
+    </div>
+  </div>
+</div>
 
-  <main>
-    <section class="intro" id="classes">
+<main>
+<section id="courses">
+  <div class="wrap">
+    <div class="section-head">
       <h2>کلاس‌های مهارتی</h2>
-      <p>مهارت مورد علاقه‌ات را انتخاب کن و برای ثبت‌نام اقدام کن.</p>
-    </section>
-
-    <section class="courses">
-      <article class="course">
-        <div class="emoji">🎬</div>
-        <h3>مهارت‌های رسانه‌ای</h3>
-        <p>آشنایی با تولید محتوا و مهارت‌های رسانه‌ای.</p>
-        <a href="#register">درخواست ثبت‌نام</a>
+      <p>برای ثبت‌نام، یکی از دوره‌های زیر را انتخاب کن. زمان و جزئیات نهایی هر کلاس از سوی مجموعه اعلام می‌شود.</p>
+    </div>
+    <div class="course-grid">
+      <article class="course-card">
+        <div class="course-icon" aria-hidden="true">💡</div>
+        <h3>نئون فلکسی</h3>
+        <p>آشنایی با ساخت تابلوها و نوشته‌های نوری و تجربه یک مهارت فنی و خلاقانه.</p>
+        <a class="btn" href="#register" data-course="نئون فلکسی">ثبت‌نام در این کلاس</a>
       </article>
-
-      <article class="course">
-        <div class="emoji">💻</div>
-        <h3>برنامه‌نویسی و هوش مصنوعی</h3>
-        <p>آشنایی با دنیای فناوری، برنامه‌نویسی و ابزارهای هوش مصنوعی.</p>
-        <a href="#register">درخواست ثبت‌نام</a>
+      <article class="course-card">
+        <div class="course-icon" aria-hidden="true">🎨</div>
+        <h3>فتوشاپ</h3>
+        <p>آشنایی با طراحی گرافیکی و ویرایش تصویر برای تولید محتوای دیداری.</p>
+        <a class="btn" href="#register" data-course="فتوشاپ">ثبت‌نام در این کلاس</a>
       </article>
-
-      <article class="course">
-        <div class="emoji">🤝</div>
-        <h3>مهارت‌های ارتباطی و کار گروهی</h3>
-        <p>تمرین گفت‌وگو، همکاری و مسئولیت‌پذیری در فعالیت‌های گروهی.</p>
-        <a href="#register">درخواست ثبت‌نام</a>
+      <article class="course-card">
+        <div class="course-icon" aria-hidden="true">🎙️</div>
+        <h3>مداحی و سرود</h3>
+        <p>فرصتی برای تمرین اجرا، هماهنگی گروهی و مشارکت در برنامه‌های فرهنگی.</p>
+        <a class="btn" href="#register" data-course="مداحی/سرود">ثبت‌نام در این کلاس</a>
       </article>
-    </section>
-
-    <
-<section class="note" id="register">
-  <h2>ثبت‌نام در کلاس‌های مهارتی</h2>
-  <p>اطلاعات زیر را وارد کن تا درخواست ثبت‌نامت ثبت شود.</p>
-
-  <form id="registration-form">
-    <label for="student_name">نام و نام خانوادگی نوجوان</label><br>
-    <input id="student_name" name="student_name" required maxlength="100"><br><br>
-
-    <label for="grade">پایه تحصیلی</label><br>
-    <select id="grade" name="grade" required>
-      <option value="">انتخاب پایه</option>
-      <option value="هفتم">هفتم</option>
-      <option value="هشتم">هشتم</option>
-      <option value="نهم">نهم</option>
-      <option value="دهم">دهم</option>
-      <option value="یازدهم">یازدهم</option>
-      <option value="دوازدهم">دوازدهم</option>
-    </select><br><br>
-
-    <label for="phone">شماره تماس</label><br>
-    <input id="phone" name="phone" type="tel" required maxlength="20"><br><br>
-
-    <label for="guardian_name">نام ولی یا سرپرست</label><br>
-    <input id="guardian_name" name="guardian_name" required maxlength="100"><br><br>
-
-<label>
-  <input type="checkbox" id="guardian_consent" required>
-  من به‌عنوان ولی یا سرپرست، با ثبت اطلاعات و درخواست ثبت‌نام موافقم.
-</label>
-<br><br>
-
-    <label for="course_id">کلاس موردنظر</label><br>
-    <select id="course_id" name="course_id" required>
-      <option value="">انتخاب کلاس</option>
-    </select><br><br>
-
-    <button type="submit">ثبت درخواست</button>
-    <p id="form-message" role="status"></p>
-  </form>
+    </div>
+    <p class="note">زمان دقیق، ظرفیت و هزینه کلاس‌ها پس از تأیید مسئولان مجموعه در سایت درج خواهد شد.</p>
+  </div>
 </section>
->
-      <h2>ثبت‌نام در کلاس‌ها</h2>
-      <p>
-        سامانه ثبت‌نام در مرحله راه‌اندازی است.
-        پس از اتصال فرم ثبت‌نام به سامانه، می‌توانی اطلاعاتت را
-        مستقیماً در همین سایت ثبت کنی.
-      </p>
-    </section>
-  </main>
 
-  <footer>
-    پایگاه مهارت‌آموزی نوجوانان مسجد فائق
-    <br>
-    یادگیری، مهارت، رفاقت و رشد
-  </footer>
-  
+<section id="schedule" class="schedule">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>برنامه حضور مجموعه</h2>
+      <p>نمای کلی برنامه هفتگی بر اساس فایل ارسالی مجموعه. این جدول با زمان‌بندی اختصاصی کلاس‌های مهارتی یکسان نیست.</p>
+    </div>
+    <div class="schedule-box">
+      <table>
+        <thead><tr><th>روز</th><th>برنامه</th><th>زمان</th></tr></thead>
+        <tbody>
+          <tr><td>یکشنبه</td><td>حلقه شهید هادی</td><td>۱۷ تا ۱۸:۳۰</td></tr>
+          <tr><td>یکشنبه</td><td>جلسه عرصه تعلیم و تربیت</td><td>۱۷ تا ۱۹</td></tr>
+          <tr><td>یکشنبه</td><td>حلقه شهید زین‌الدین ۲</td><td>۱۷:۳۰ تا ۱۹</td></tr>
+          <tr><td>یکشنبه</td><td>جودو</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+          <tr><td>سه‌شنبه</td><td>جلسه کادر متوسطه اول</td><td>۱۷ تا ۱۹</td></tr>
+          <tr><td>سه‌شنبه</td><td>جودو</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+          <tr><td>سه‌شنبه</td><td>حلقه شهید باکری</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+          <tr><td>چهارشنبه</td><td>سانس شهید عبدی ۲</td><td>۱۵:۳۰ تا ۱۷</td></tr>
+          <tr><td>چهارشنبه</td><td>سانس شهید زین‌الدین ۲</td><td>۱۷ تا ۱۹</td></tr>
+          <tr><td>چهارشنبه</td><td>حلقه شهید عبدی ۱ و ۲</td><td>۱۷ تا ۱۹</td></tr>
+          <tr><td>چهارشنبه</td><td>حلقه شهید زین‌الدین ۱ و سانس شهید هادی</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+          <tr><td>پنجشنبه</td><td>هیئت نوجوانان</td><td>۱۵ تا ۱۶:۳۰</td></tr>
+          <tr><td>پنجشنبه</td><td>سانس شهید زین‌الدین ۱</td><td>۱۷ تا ۱۹</td></tr>
+          <tr><td>پنجشنبه</td><td>سانس شهید عبدی ۱</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+          <tr><td>جمعه</td><td>سانس کادر</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">در فایل ارسالی برای شنبه و دوشنبه برنامه مشخصی ثبت نشده بود. قبل از انتشار عمومی، نام‌ها و ساعت‌ها را با مسئول برنامه تطبیق دهید.</p>
+  </div>
+</section>
+
+<section id="register">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>فرم ثبت‌نام کلاس</h2>
+      <p>اطلاعات را دقیق وارد کن. ثبت درخواست به معنی تأیید نهایی ثبت‌نام نیست.</p>
+    </div>
+    <div class="form-layout">
+      <aside class="info-panel">
+        <h3>قبل از ثبت‌نام</h3>
+        <p>اطلاعات تماس باید معتبر باشد. برای ثبت‌نام نوجوانان، تأیید ولی یا سرپرست الزامی است.</p>
+        <p>پس از ارسال فرم، مسئولان مجموعه برای پیگیری درخواست با شما تماس خواهند گرفت.</p>
+      </aside>
+      <div class="form-card">
+        <form id="registration-form">
+          <div class="fields">
+            <div><label for="student_name">نام و نام خانوادگی نوجوان</label><input id="student_name" name="student_name" required maxlength="100" autocomplete="name"></div>
+            <div><label for="grade">پایه تحصیلی</label><select id="grade" name="grade" required><option value="">انتخاب کنید</option><option>هفتم</option><option>هشتم</option><option>نهم</option><option>دهم</option><option>یازدهم</option><option>دوازدهم</option><option>سایر</option></select></div>
+            <div><label for="phone">شماره تماس</label><input id="phone" name="phone" type="tel" required maxlength="20" autocomplete="tel" placeholder="شماره تماس"></div>
+            <div><label for="guardian_name">نام ولی یا سرپرست</label><input id="guardian_name" name="guardian_name" required maxlength="100"></div>
+            <div class="field-full"><label for="course_id">کلاس موردنظر</label><select id="course_id" name="course_id" required><option value="">در حال دریافت فهرست کلاس‌ها...</option></select></div>
+          </div>
+          <label class="consent"><input id="guardian_consent" type="checkbox" required><span>ولی یا سرپرست از ثبت درخواست این کلاس مطلع است و رضایت دارد.</span></label>
+          <button class="btn btn-gold" type="submit">ارسال درخواست ثبت‌نام</button>
+          <div id="form-message" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">پایگاه مهارت‌آموزی نوجوانان مسجد فائق · یادگیری، مهارت و رشد</div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./config.js"></script>
 <script>
