@@ -129,6 +129,28 @@ async function startRegistrationApp() {
       return;
     }
 
+const courseTitle =
+  courseSelect.options[courseSelect.selectedIndex].textContent;
+
+try {
+  await fetch(
+    "https://script.google.com/macros/s/AKfycbxnveLjHuRJN3-X6BBeVn_X26hRUU0K2Ou_-CrX5m8ZjDoy0UX55RjoGwUxrOc5Fl3N/exec",
+    {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify({
+        ...record,
+        course_title: courseTitle
+      })
+    }
+  );
+} catch (sheetError) {
+  console.error("Google Sheets sync error:", sheetError);
+}
+
     form.reset();
     message.textContent = "درخواست ثبت‌نام با موفقیت ارسال شد.";
   });
