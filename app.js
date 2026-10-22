@@ -5,59 +5,15 @@ const message = document.getElementById("form-message");
 const courseGrid = document.getElementById("course-grid");
 
 function getCourseIcon(title) {
-  const name = title.trim();
-
-  if (name.includes("نئون")) return "💡";
-  if (name.includes("فتوشاپ")) return "🎨";
-  if (name.includes("مداحی") || name.includes("سرود")) return "🎙️";
-
+  if (title.includes("نئون")) return "💡";
+  if (title.includes("فتوشاپ")) return "🎨";
+  if (title.includes("مداحی") || title.includes("سرود")) return "🎙️";
   return "📘";
 }
 
-function renderCourses(courses) {
-  if (!courseGrid) return;
-
-  courseGrid.replaceChildren();
-
-  for (const course of courses) {
-    const card = document.createElement("article");
-    card.className = "course-card";
-
-    const icon = document.createElement("div");
-    icon.className = "course-icon";
-    icon.setAttribute("aria-hidden", "true");
-    icon.textContent = getCourseIcon(course.title || "");
-
-    const heading = document.createElement("h3");
-    heading.textContent = course.title || "کلاس آموزشی";
-
-    const description = document.createElement("p");
-    description.textContent =
-      course.description || "توضیحات این کلاس به‌زودی اضافه می‌شود.";
-
-    const link = document.createElement("a");
-    link.className = "btn";
-    link.href = "#register";
-    link.textContent = "ثبت‌نام در این کلاس";
-
-    link.addEventListener("click", () => {
-      courseSelect.value = String(course.id);
-    });
-
-    card.append(icon, heading, description, link);
-    courseGrid.appendChild(card);
-  }
-}
-
 async function startRegistrationApp() {
-  if (
-    !window.supabase ||
-    !window.SUPABASE_URL ||
-    !window.SUPABASE_ANON_KEY
-  ) {
-    if (message) {
-      message.textContent = "اتصال سامانه هنوز تنظیم نشده است.";
-    }
+  if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
+    if (message) message.textContent = "اتصال سامانه هنوز تنظیم نشده است.";
     return;
   }
 
@@ -73,11 +29,8 @@ async function startRegistrationApp() {
     .order("title");
 
   if (error) {
-    console.error("Courses error:", error);
-
-    if (message) {
-      message.textContent = "دریافت کلاس‌ها ناموفق بود.";
-    }
+    console.error(error);
+    if (message) message.textContent = "دریافت کلاس‌ها ناموفق بود.";
     return;
   }
 
@@ -101,7 +54,38 @@ async function startRegistrationApp() {
     }
   }
 
-  renderCourses(activeCourses);
+  if (courseGrid) {
+    courseGrid.replaceChildren();
+
+    for (const course of activeCourses) {
+      const card = document.createElement("article");
+      card.className = "course-card";
+
+      const icon = document.createElement("div");
+      icon.className = "course-icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.textContent = getCourseIcon(course.title || "");
+
+      const heading = document.createElement("h3");
+      heading.textContent = course.title || "کلاس آموزشی";
+
+      const description = document.createElement("p");
+      description.textContent =
+        course.description || "توضیحات این کلاس به‌زودی اضافه می‌شود.";
+
+      const link = document.createElement("a");
+      link.className = "btn";
+      link.href = "#register";
+      link.textContent = "ثبت‌نام در این کلاس";
+
+      link.addEventListener("click", () => {
+        if (courseSelect) courseSelect.value = String(course.id);
+      });
+
+      card.append(icon, heading, description, link);
+      courseGrid.appendChild(card);
+    }
+  }
 
   if (!form || !courseSelect || !message) return;
 
