@@ -6,65 +6,411 @@
   <title>پایگاه مهارت‌آموزی نوجوانان مسجد فائق</title>
   <meta name="description" content="معرفی و ثبت‌نام کلاس‌های مهارتی نوجوانان مسجد فائق">
   <style>
-    :root{--green:#075b45;--green2:#0b7656;--mint:#e9f8ef;--gold:#f4cb67;--ink:#18382f;--muted:#5b7068;--white:#fff;--line:#dce9e1}
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f6faf7;color:var(--ink);line-height:1.9}
-    a{color:inherit}
-    .wrap{width:min(1120px,92%);margin:auto}
-    header{background:var(--green);color:#fff;position:sticky;top:0;z-index:5;box-shadow:0 4px 18px #082e241c}
-    .nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:12px 0}
-    .brand{font-weight:800;font-size:18px}
-    nav{display:flex;gap:18px;flex-wrap:wrap}
-    nav a{text-decoration:none;font-size:14px;color:#f0fff6}
    
-.hero {
-  background: linear-gradient(90deg, rgba(3,65,59,.98) 0%, rgba(3,65,59,.92) 42%, rgba(3,65,59,.25) 72%, rgba(3,65,59,.06) 100%);
-  color: #fff;
-  padding: 66px 0 60px;
-  overflow: hidden;
+:root {
+  --green: #075b45;
+  --green2: #0b7656;
+  --mint: #e9f8ef;
+  --gold: #ffd166;
+  --ink: #18382f;
+  --muted: #5b7068;
+  --white: #fff;
+  --line: #dce9e1;
 }
 
-    .hero-grid{display:grid;grid-template-columns:1.35fr .65fr;align-items:center;gap:30px}
-    .eyebrow{display:inline-block;background:#ffffff1c;border:1px solid #ffffff45;border-radius:99px;padding:5px 13px;font-size:13px}
-    h1{font-size:clamp(29px,5vw,46px);line-height:1.5;margin:14px 0}
-    .hero p{max-width:680px;color:#e7fff1;margin:0 0 24px}
-    .btn{display:inline-block;text-decoration:none;border:0;border-radius:12px;padding:11px 20px;font-weight:bold;cursor:pointer;font-family:inherit}
-    .btn-gold{background:var(--gold);color:#16392e}
-    .btn-light{background:#fff;color:var(--green)}
-    .hero-mark{border:1px solid #ffffff4a;background:#ffffff12;border-radius:26px;padding:28px;text-align:center}
-    .hero-mark .symbol{font-size:66px;line-height:1.3}
-    .hero-mark strong{display:block;font-size:20px}
-    section{padding:48px 0}
-    .section-head{text-align:center;max-width:720px;margin:0 auto 28px}
-    .section-head h2{margin:0 0 7px;font-size:clamp(23px,3vw,32px)}
-    .section-head p{margin:0;color:var(--muted)}
-    .course-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .course-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 8px 25px #123b2b08;display:flex;flex-direction:column;min-height:250px}
-    .course-icon{width:54px;height:54px;border-radius:16px;background:var(--mint);display:grid;place-items:center;font-size:27px;margin-bottom:12px}
-    .course-card h3{margin:0 0 8px;font-size:20px}
-    .course-card p{color:var(--muted);margin:0 0 18px;font-size:14px}
-    .course-card .btn{margin-top:auto;text-align:center;background:var(--green);color:#fff}
-    .note{font-size:13px;color:var(--muted);text-align:center;margin:16px 0 0}
-    .schedule{background:var(--mint)}
-    .schedule-box{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:auto}
-    table{width:100%;border-collapse:collapse;min-width:620px}
-    th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
-    th{background:#d3f1df;color:#174c3a}
-    tr:last-child td{border-bottom:0}
-    .form-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:25px;align-items:start}
-    .info-panel{background:var(--green);color:#fff;padding:25px;border-radius:20px}
-    .info-panel p{color:#e0f4e8}
-    .form-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px}
-    .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    label{display:block;font-size:14px;font-weight:bold;margin-bottom:5px}
-    input,select{width:100%;border:1px solid #cbdcd1;border-radius:10px;padding:12px;background:#fff;font-family:inherit;font-size:14px;color:var(--ink)}
-    .field-full{grid-column:1/-1}
-    .consent{display:flex;gap:9px;align-items:flex-start;font-weight:normal;font-size:13px;margin:16px 0}
-    .consent input{width:auto;margin-top:7px}
-    #form-message{font-size:14px;font-weight:bold;margin-top:12px}
-    footer{background:#073e30;color:#e6f8ed;padding:28px 0;text-align:center;font-size:13px}
-    @media(max-width:760px){.hero-grid,.form-layout{grid-template-columns:1fr}.hero-mark{display:none}.course-grid{grid-template-columns:1fr}.fields{grid-template-columns:1fr}nav{gap:12px}.nav{justify-content:center;text-align:center}.hero{padding:48px 0}}
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+body {
+  margin: 0;
+  font-family: Tahoma, Arial, sans-serif;
+  background: #f5faf7;
+  color: var(--ink);
+  line-height: 1.9;
+}
+
+a { color: inherit; }
+
+.wrap {
+  width: min(1120px, 92%);
+  margin: auto;
+}
+
+header {
+  background: #075b45;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 4px 20px #082e2420;
+}
+
+.nav {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 12px 0;
+}
+
+.brand {
+  font-weight: 900;
+  font-size: 18px;
+}
+
+nav {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+nav a {
+  text-decoration: none;
+  font-size: 14px;
+  color: #f0fff6;
+}
+
+nav a:hover { color: var(--gold); }
+
+/* تصویر بزرگ ابتدای سایت */
+.hero {
+  color: white;
+  padding: 82px 0 76px;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg,
+      rgba(3, 55, 43, .94),
+      rgba(3, 65, 50, .82) 55%,
+      rgba(3, 65, 50, .35)),
+    url("https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=1800&q=85")
+    center 40% / cover no-repeat;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.35fr .65fr;
+  align-items: center;
+  gap: 30px;
+}
+
+.eyebrow {
+  display: inline-block;
+  background: #ffffff20;
+  border: 1px solid #ffffff60;
+  border-radius: 99px;
+  padding: 5px 15px;
+  font-size: 13px;
+}
+
+h1 {
+  font-size: clamp(29px, 5vw, 48px);
+  line-height: 1.5;
+  margin: 14px 0;
+}
+
+.hero p {
+  max-width: 680px;
+  color: #e7fff1;
+  margin: 0 0 24px;
+}
+
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px #00000020;
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: #16392e;
+}
+
+.btn-light {
+  background: white;
+  color: var(--green);
+}
+
+.hero-mark {
+  border: 1px solid #ffffff65;
+  background: #ffffff20;
+  backdrop-filter: blur(8px);
+  border-radius: 26px;
+  padding: 28px;
+  text-align: center;
+}
+
+.hero-mark .symbol {
+  font-size: 66px;
+  line-height: 1.3;
+}
+
+.hero-mark strong {
+  display: block;
+  font-size: 20px;
+}
+
+section { padding: 60px 0; }
+
+.section-head {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 32px;
+}
+
+.section-head h2 {
+  margin: 0 0 7px;
+  font-size: clamp(23px, 3vw, 34px);
+}
+
+.section-head p { color: var(--muted); }
+
+/* کارت‌های کلاس */
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.course-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 23px;
+  overflow: hidden;
+  padding: 0 22px 23px;
+  box-shadow: 0 10px 30px #123b2b0b;
+  display: flex;
+  flex-direction: column;
+  min-height: 370px;
+  transition: transform .25s, box-shadow .25s;
+}
+
+.course-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 18px 38px #123b2b18;
+}
+
+/* تصاویر اینترنتی کارت‌ها */
+.course-card::before {
+  content: "";
+  display: block;
+  height: 170px;
+  margin: 0 -22px 18px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.course-card:nth-child(1)::before {
+  background-image:
+    linear-gradient(0deg, #123b2b18, transparent),
+    url("https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80");
+}
+
+.course-card:nth-child(2)::before {
+  background-image:
+    linear-gradient(0deg, #123b2b18, transparent),
+    url("https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&w=800&q=80");
+}
+
+.course-card:nth-child(3)::before {
+  background-image:
+    linear-gradient(0deg, #123b2b18, transparent),
+    url("https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?auto=format&fit=crop&w=800&q=80");
+}
+
+.course-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 17px;
+  background: var(--mint);
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.course-card h3 {
+  margin: 0 0 8px;
+  font-size: 21px;
+}
+
+.course-card p {
+  color: var(--muted);
+  margin: 0 0 14px;
+  font-size: 14px;
+}
+
+.course-card .course-price {
+  color: var(--green);
+  font-weight: bold;
+}
+
+.course-card .btn {
+  margin-top: auto;
+  text-align: center;
+  background: var(--green);
+  color: white;
+}
+
+.note {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  margin: 18px 0 0;
+}
+
+/* جدول برنامه */
+.schedule { background: #e9f8ef; }
+
+.schedule-box {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: auto;
+  box-shadow: 0 8px 24px #123b2b08;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+}
+
+th, td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+  vertical-align: top;
+}
+
+th {
+  background: #c9edda;
+  color: #174c3a;
+}
+
+tr:last-child td { border-bottom: 0; }
+
+/* فرم ثبت‌نام */
+.form-layout {
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: 25px;
+  align-items: start;
+}
+
+.info-panel {
+  background: linear-gradient(145deg, #075b45, #0b7656);
+  color: white;
+  padding: 28px;
+  border-radius: 22px;
+  box-shadow: 0 12px 28px #075b4520;
+}
+
+.info-panel p { color: #e0f4e8; }
+
+.form-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 26px;
+  box-shadow: 0 10px 30px #123b2b0b;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input, select {
+  width: 100%;
+  border: 1px solid #cbdcd1;
+  border-radius: 12px;
+  padding: 12px;
+  background: white;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+input:focus, select:focus {
+  outline: 2px solid #78c9a2;
+  border-color: var(--green2);
+}
+
+.field-full { grid-column: 1 / -1; }
+
+.consent {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-weight: normal;
+  font-size: 13px;
+  margin: 16px 0;
+}
+
+.consent input {
+  width: auto;
+  margin-top: 7px;
+}
+
+#form-message {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+
+button:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+footer {
+  background: #073e30;
+  color: #e6f8ed;
+  padding: 30px 0;
+  text-align: center;
+  font-size: 13px;
+}
+
+@media (max-width: 760px) {
+  .hero-grid, .form-layout { grid-template-columns: 1fr; }
+  .hero-mark { display: none; }
+  .course-grid { grid-template-columns: 1fr; }
+  .course-card { min-height: 340px; }
+  .fields { grid-template-columns: 1fr; }
+  .field-full { grid-column: auto; }
+  nav { gap: 12px; justify-content: center; }
+  .nav { justify-content: center; text-align: center; }
+  .hero { padding: 52px 0; }
+  section { padding: 42px 0; }
+}
+
   </style>
 </head>
 <body>
