@@ -81,7 +81,7 @@ function fileToBase64(file) {
     reader.readAsDataURL(file);
   });
 }
-
+let activeCourses = [];
 async function startRegistrationApp() {
   if (
     !window.supabase ||
@@ -109,8 +109,7 @@ async function startRegistrationApp() {
     return;
   }
 
-  const activeCourses = courses || [];
-
+ activeCourses = courses || [];
   if (courseSelect) {
     courseSelect.replaceChildren();
 
