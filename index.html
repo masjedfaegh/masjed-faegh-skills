@@ -1,426 +1,744 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#103e32">
+  <meta name="description" content="پایگاه مهارت‌آموزی نوجوانان مسجد فائق؛ یادگیری، مهارت و رشد">
   <title>پایگاه مهارت‌آموزی نوجوانان مسجد فائق</title>
-  <meta name="description" content="معرفی و ثبت‌نام کلاس‌های مهارتی نوجوانان مسجد فائق">
+
   <style>
-   
-:root {
-  --green: #075b45;
-  --green2: #0b7656;
-  --mint: #e9f8ef;
-  --gold: #ffd166;
-  --ink: #18382f;
-  --muted: #5b7068;
-  --white: #fff;
-  --line: #dce9e1;
-}
+    :root {
+      --green: #103e32;
+      --green-dark: #092d25;
+      --green-light: #1d6650;
+      --mint: #e8f2e8;
+      --cream: #faf8f0;
+      --gold: #d8b46a;
+      --gold-light: #f4e8c8;
+      --ink: #203b31;
+      --muted: #6e7e73;
+      --white: #fff;
+      --line: #e2e8dc;
+      --shadow: 0 16px 45px rgba(16, 62, 50, .08);
+      --radius: 22px;
+    }
 
-* { box-sizing: border-box; }
+    * { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 90px;
-}
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+    }
 
-body {
-  margin: 0;
-  font-family: Tahoma, Arial, sans-serif;
-  background: #f5faf7;
-  color: var(--ink);
-  line-height: 1.9;
-}
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 2;
+    }
 
-a { color: inherit; }
+    a { color: inherit; }
 
-.wrap {
-  width: min(1120px, 92%);
-  margin: auto;
-}
+    button, input, select {
+      font: inherit;
+    }
 
-header {
-  background: #075b45;
-  color: white;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 4px 20px #082e2420;
-}
+    button, a {
+      -webkit-tap-highlight-color: transparent;
+    }
 
-.nav {
-  min-height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  flex-wrap: wrap;
-  padding: 12px 0;
-}
+    .wrap {
+      width: min(1160px, 92%);
+      margin-inline: auto;
+    }
 
-.brand {
-  font-weight: 900;
-  font-size: 18px;
-}
+    /* نوار بالای سایت */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      color: var(--white);
+      background: rgba(9, 45, 37, .97);
+      border-bottom: 1px solid rgba(216, 180, 106, .24);
+      box-shadow: 0 5px 25px rgba(0, 0, 0, .08);
+      backdrop-filter: blur(14px);
+    }
 
-nav {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
+    .nav {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding-block: 12px;
+    }
 
-nav a {
-  text-decoration: none;
-  font-size: 14px;
-  color: #f0fff6;
-}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      font-weight: 900;
+      line-height: 1.8;
+    }
 
-nav a:hover { color: var(--gold); }
+    .brand-mark {
+      flex: 0 0 47px;
+      width: 47px;
+      height: 47px;
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      border: 1px solid rgba(216, 180, 106, .65);
+      border-radius: 15px 15px 15px 5px;
+      background: rgba(216, 180, 106, .09);
+      font-size: 25px;
+    }
 
-/* تصویر بزرگ ابتدای سایت */
-.hero {
-  color: white;
-  padding: 82px 0 76px;
-  overflow: hidden;
-  background:
-    linear-gradient(90deg,
-      rgba(3, 55, 43, .94),
-      rgba(3, 65, 50, .82) 55%,
-      rgba(3, 65, 50, .35)),
-    url("https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=1800&q=85")
-    center 40% / cover no-repeat;
-}
+    .brand small {
+      display: block;
+      color: #d8e5d9;
+      font-size: 11px;
+      font-weight: 400;
+    }
 
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1.35fr .65fr;
-  align-items: center;
-  gap: 30px;
-}
+    nav {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
 
-.eyebrow {
-  display: inline-block;
-  background: #ffffff20;
-  border: 1px solid #ffffff60;
-  border-radius: 99px;
-  padding: 5px 15px;
-  font-size: 13px;
-}
+    nav a {
+      color: #f2f5ed;
+      text-decoration: none;
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      transition: background .2s, color .2s;
+    }
 
-h1 {
-  font-size: clamp(29px, 5vw, 48px);
-  line-height: 1.5;
-  margin: 14px 0;
-}
+    nav a:hover {
+      background: rgba(255,255,255,.09);
+      color: var(--gold);
+    }
 
-.hero p {
-  max-width: 680px;
-  color: #e7fff1;
-  margin: 0 0 24px;
-}
+    nav a.nav-cta {
+      color: var(--green-dark);
+      background: var(--gold);
+      font-weight: bold;
+    }
 
-.btn {
-  display: inline-block;
-  text-decoration: none;
-  border: 0;
-  border-radius: 14px;
-  padding: 12px 20px;
-  font-weight: bold;
-  cursor: pointer;
-  font-family: inherit;
-  transition: transform .2s, box-shadow .2s;
-}
+    /* صفحه آغازین؛ بدون تصویر خارجی */
+    .hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      color: white;
+      background:
+        radial-gradient(ellipse at 12% 15%, rgba(216,180,106,.16), transparent 34%),
+        radial-gradient(ellipse at 90% 85%, rgba(63,132,97,.24), transparent 38%),
+        linear-gradient(135deg, #092d25, #103e32 55%, #174c3b);
+      padding: 78px 0 85px;
+    }
 
-.btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px #00000020;
-}
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 300px;
+      height: 300px;
+      border: 1px solid rgba(216,180,106,.16);
+      border-radius: 48px;
+      transform: rotate(35deg);
+      pointer-events: none;
+    }
 
-.btn-gold {
-  background: var(--gold);
-  color: #16392e;
-}
+    .hero::before {
+      top: -175px;
+      left: 5%;
+      box-shadow: 0 0 0 25px rgba(216,180,106,.025),
+                  0 0 0 50px rgba(216,180,106,.025);
+    }
 
-.btn-light {
-  background: white;
-  color: var(--green);
-}
+    .hero::after {
+      bottom: -225px;
+      right: 7%;
+      width: 350px;
+      height: 350px;
+    }
 
-.hero-mark {
-  border: 1px solid #ffffff65;
-  background: #ffffff20;
-  backdrop-filter: blur(8px);
-  border-radius: 26px;
-  padding: 28px;
-  text-align: center;
-}
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.4fr .6fr;
+      align-items: center;
+      gap: 50px;
+    }
 
-.hero-mark .symbol {
-  font-size: 66px;
-  line-height: 1.3;
-}
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 6px 14px;
+      border: 1px solid rgba(216,180,106,.45);
+      border-radius: 99px;
+      background: rgba(216,180,106,.08);
+      color: #f2dfb2;
+      font-size: 12px;
+    }
 
-.hero-mark strong {
-  display: block;
-  font-size: 20px;
-}
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      background: var(--gold);
+      border-radius: 50%;
+      box-shadow: 0 0 0 5px rgba(216,180,106,.12);
+    }
 
-section { padding: 60px 0; }
+    h1 {
+      margin: 20px 0 17px;
+      font-size: clamp(29px, 4.3vw, 49px);
+      line-height: 1.7;
+      letter-spacing: -.7px;
+    }
 
-.section-head {
-  text-align: center;
-  max-width: 720px;
-  margin: 0 auto 32px;
-}
+    h1 span { color: var(--gold); }
 
-.section-head h2 {
-  margin: 0 0 7px;
-  font-size: clamp(23px, 3vw, 34px);
-}
+    .hero p {
+      max-width: 650px;
+      margin: 0 0 27px;
+      color: #d8e8dc;
+      font-size: 15px;
+      line-height: 2.3;
+    }
 
-.section-head p { color: var(--muted); }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
 
-/* کارت‌های کلاس */
-.course-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-}
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 48px;
+      padding: 11px 20px;
+      border: 1px solid transparent;
+      border-radius: 13px;
+      font-weight: bold;
+      font-size: 14px;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s, background .2s;
+    }
 
-.course-card {
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 23px;
-  overflow: hidden;
-  padding: 0 22px 23px;
-  box-shadow: 0 10px 30px #123b2b0b;
-  display: flex;
-  flex-direction: column;
-  min-height: 370px;
-  transition: transform .25s, box-shadow .25s;
-}
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(0,0,0,.13);
+    }
 
-.course-card:hover {
-  transform: translateY(-7px);
-  box-shadow: 0 18px 38px #123b2b18;
-}
+    .btn-gold {
+      color: var(--green-dark);
+      background: var(--gold);
+    }
 
-/* تصاویر اینترنتی کارت‌ها */
-.course-card::before {
-  content: "";
-  display: block;
-  height: 170px;
-  margin: 0 -22px 18px;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-}
+    .btn-gold:hover { background: #e8c980; }
 
-.course-card:nth-child(1)::before {
-  background-image:
-    linear-gradient(0deg, #123b2b18, transparent),
-    url("https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80");
-}
+    .btn-outline {
+      color: white;
+      background: transparent;
+      border-color: rgba(255,255,255,.38);
+    }
 
-.course-card:nth-child(2)::before {
-  background-image:
-    linear-gradient(0deg, #123b2b18, transparent),
-    url("https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&w=800&q=80");
-}
+    .btn-outline:hover { background: rgba(255,255,255,.08); }
 
-.course-card:nth-child(3)::before {
-  background-image:
-    linear-gradient(0deg, #123b2b18, transparent),
-    url("https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?auto=format&fit=crop&w=800&q=80");
-}
+    .hero-panel {
+      position: relative;
+      padding: 30px 25px;
+      border: 1px solid rgba(216,180,106,.36);
+      border-radius: 28px 28px 28px 8px;
+      background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.025));
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0,0,0,.13);
+    }
 
-.course-icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 17px;
-  background: var(--mint);
-  display: grid;
-  place-items: center;
-  font-size: 28px;
-  margin-bottom: 10px;
-}
+    .hero-emblem {
+      width: 105px;
+      height: 105px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 19px;
+      border: 1px solid rgba(216,180,106,.7);
+      border-radius: 50%;
+      outline: 1px solid rgba(216,180,106,.28);
+      outline-offset: 8px;
+      color: var(--gold);
+      font-size: 49px;
+    }
 
-.course-card h3 {
-  margin: 0 0 8px;
-  font-size: 21px;
-}
+    .hero-panel h2 {
+      margin: 0 0 8px;
+      font-size: 21px;
+    }
 
-.course-card p {
-  color: var(--muted);
-  margin: 0 0 14px;
-  font-size: 14px;
-}
+    .hero-panel p {
+      margin: 0;
+      color: #d5e4d8;
+      font-size: 13px;
+    }
 
-.course-card .course-price {
-  color: var(--green);
-  font-weight: bold;
-}
+    .hero-ornament {
+      margin-top: 22px;
+      color: var(--gold);
+      letter-spacing: 10px;
+      font-size: 18px;
+    }
 
-.course-card .btn {
-  margin-top: auto;
-  text-align: center;
-  background: var(--green);
-  color: white;
-}
+    /* نوار کوتاه معرفی */
+    .values {
+      position: relative;
+      z-index: 2;
+      margin-top: -24px;
+    }
 
-.note {
-  font-size: 13px;
-  color: var(--muted);
-  text-align: center;
-  margin: 18px 0 0;
-}
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--line);
+      box-shadow: var(--shadow);
+    }
 
-/* جدول برنامه */
-.schedule { background: #e9f8ef; }
+    .value-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      background: white;
+    }
 
-.schedule-box {
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  overflow: auto;
-  box-shadow: 0 8px 24px #123b2b08;
-}
+    .value-icon {
+      flex: 0 0 43px;
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: var(--mint);
+      color: var(--green);
+      font-size: 21px;
+    }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 620px;
-}
+    .value-item strong {
+      display: block;
+      font-size: 14px;
+    }
 
-th, td {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--line);
-  text-align: right;
-  vertical-align: top;
-}
+    .value-item small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+    }
 
-th {
-  background: #c9edda;
-  color: #174c3a;
-}
+    /* ساختار عمومی بخش‌ها */
+    section { padding: 75px 0; }
 
-tr:last-child td { border-bottom: 0; }
+    .section-head {
+      max-width: 730px;
+      margin: 0 auto 35px;
+      text-align: center;
+    }
 
-/* فرم ثبت‌نام */
-.form-layout {
-  display: grid;
-  grid-template-columns: .8fr 1.2fr;
-  gap: 25px;
-  align-items: start;
-}
+    .section-kicker {
+      color: var(--green-light);
+      font-size: 12px;
+      font-weight: bold;
+    }
 
-.info-panel {
-  background: linear-gradient(145deg, #075b45, #0b7656);
-  color: white;
-  padding: 28px;
-  border-radius: 22px;
-  box-shadow: 0 12px 28px #075b4520;
-}
+    .section-head h2 {
+      margin: 6px 0 8px;
+      color: var(--green);
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.7;
+    }
 
-.info-panel p { color: #e0f4e8; }
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
 
-.form-card {
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  padding: 26px;
-  box-shadow: 0 10px 30px #123b2b0b;
-}
+    /* کارت‌های کلاس */
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
 
-.fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
+    .course-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 300px;
+      padding: 25px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+      box-shadow: 0 8px 28px rgba(16,62,50,.045);
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+    }
 
-label {
-  display: block;
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
+    .course-card::before {
+      content: "";
+      position: absolute;
+      top: -43px;
+      left: -43px;
+      width: 115px;
+      height: 115px;
+      border: 1px solid rgba(216,180,106,.35);
+      border-radius: 30px;
+      transform: rotate(35deg);
+      pointer-events: none;
+    }
 
-input, select {
-  width: 100%;
-  border: 1px solid #cbdcd1;
-  border-radius: 12px;
-  padding: 12px;
-  background: white;
-  font-family: inherit;
-  font-size: 14px;
-  color: var(--ink);
-}
+    .course-card:hover {
+      transform: translateY(-6px);
+      border-color: #b6cdbb;
+      box-shadow: var(--shadow);
+    }
 
-input:focus, select:focus {
-  outline: 2px solid #78c9a2;
-  border-color: var(--green2);
-}
+    .course-icon {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 17px;
+      border: 1px solid #d7e6d7;
+      border-radius: 18px 18px 18px 5px;
+      background: var(--mint);
+      color: var(--green);
+      font-size: 28px;
+    }
 
-.field-full { grid-column: 1 / -1; }
+    .course-card h3 {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 20px;
+    }
 
-.consent {
-  display: flex;
-  gap: 9px;
-  align-items: flex-start;
-  font-weight: normal;
-  font-size: 13px;
-  margin: 16px 0;
-}
+    .course-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 2.1;
+    }
 
-.consent input {
-  width: auto;
-  margin-top: 7px;
-}
+    .course-price {
+      color: var(--green-light);
+      font-weight: bold;
+    }
 
-#form-message {
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: 12px;
-  overflow-wrap: anywhere;
-}
+    .course-card .btn {
+      width: 100%;
+      margin-top: auto;
+      color: white;
+      background: var(--green);
+    }
 
-button:disabled {
-  opacity: .65;
-  cursor: wait;
-}
+    .course-card .btn:hover { background: var(--green-light); }
 
-footer {
-  background: #073e30;
-  color: #e6f8ed;
-  padding: 30px 0;
-  text-align: center;
-  font-size: 13px;
-}
+    .note {
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
 
-@media (max-width: 760px) {
-  .hero-grid, .form-layout { grid-template-columns: 1fr; }
-  .hero-mark { display: none; }
-  .course-grid { grid-template-columns: 1fr; }
-  .course-card { min-height: 340px; }
-  .fields { grid-template-columns: 1fr; }
-  .field-full { grid-column: auto; }
-  nav { gap: 12px; justify-content: center; }
-  .nav { justify-content: center; text-align: center; }
-  .hero { padding: 52px 0; }
-  section { padding: 42px 0; }
-}
+    /* جدول برنامه */
+    .schedule {
+      background:
+        radial-gradient(ellipse at 100% 0%, rgba(216,180,106,.1), transparent 35%),
+        #edf3e9;
+      border-block: 1px solid #e1e9dc;
+    }
 
+    .schedule-box {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      min-width: 600px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 13px 17px;
+      border-bottom: 1px solid #edf0e9;
+      text-align: right;
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      color: white;
+      background: var(--green);
+      font-weight: bold;
+    }
+
+    tbody tr:nth-child(even) { background: #fafbf7; }
+    tbody tr:hover { background: #f0f5ec; }
+    tr:last-child td { border-bottom: 0; }
+
+    /* ثبت‌نام */
+    .form-layout {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      align-items: start;
+      gap: 24px;
+    }
+
+    .info-panel {
+      position: relative;
+      overflow: hidden;
+      padding: 30px;
+      border: 1px solid rgba(216,180,106,.32);
+      border-radius: 22px 22px 22px 7px;
+      color: white;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(216,180,106,.17), transparent 42%),
+        linear-gradient(145deg, var(--green), var(--green-dark));
+      box-shadow: var(--shadow);
+    }
+
+    .info-panel h3 {
+      margin: 0 0 12px;
+      color: #f1d9a2;
+      font-size: 22px;
+    }
+
+    .info-panel p {
+      color: #e0e9df;
+      font-size: 13px;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .info-list div {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .info-list span { color: var(--gold); }
+
+    .form-card {
+      padding: 29px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .form-card h3 {
+      margin: 0 0 6px;
+      color: var(--green);
+      font-size: 20px;
+    }
+
+    .form-intro {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 17px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    input:not([type="checkbox"]), select {
+      width: 100%;
+      min-height: 48px;
+      padding: 11px 13px;
+      border: 1px solid #d8e1d6;
+      border-radius: 12px;
+      background: #fcfdf9;
+      color: var(--ink);
+      font-size: 13px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #6eaa85;
+      box-shadow: 0 0 0 3px rgba(110,170,133,.15);
+    }
+
+    .field-full { grid-column: 1 / -1; }
+
+    .consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 19px 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: normal;
+    }
+
+    .consent input {
+      flex: 0 0 auto;
+      width: 17px;
+      height: 17px;
+      margin-top: 7px;
+      accent-color: var(--green);
+    }
+
+    #registration-form button[type="submit"] {
+      width: 100%;
+    }
+
+    #form-message {
+      margin-top: 13px;
+      overflow-wrap: anywhere;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    button:disabled {
+      opacity: .65;
+      cursor: wait;
+    }
+
+    /* پایین صفحه */
+    footer {
+      padding: 35px 0 22px;
+      color: #e4ece1;
+      background: var(--green-dark);
+      border-top: 3px solid var(--gold);
+      text-align: center;
+    }
+
+    .footer-title {
+      margin-bottom: 5px;
+      color: var(--gold);
+      font-weight: bold;
+      font-size: 17px;
+    }
+
+    footer p {
+      margin: 5px 0;
+      font-size: 12px;
+    }
+
+    .footer-bottom {
+      margin-top: 23px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      color: #b9cbbd;
+      font-size: 11px;
+    }
+
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 850px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+      .hero-panel { max-width: 420px; width: 100%; margin-inline: auto; }
+      .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .form-layout { grid-template-columns: 1fr; }
+      .info-panel { order: 2; }
+    }
+
+    @media (max-width: 600px) {
+      .nav {
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+        padding-block: 13px;
+      }
+
+      .brand { font-size: 14px; }
+      .brand-mark { width: 41px; height: 41px; flex-basis: 41px; }
+      nav { justify-content: center; gap: 3px; }
+      nav a { padding: 7px 9px; font-size: 11px; }
+
+      .hero { padding: 48px 0 62px; }
+      h1 { font-size: 30px; }
+      .hero p { font-size: 13px; }
+      .hero-panel { padding: 25px 18px; }
+      .hero-emblem { width: 85px; height: 85px; font-size: 40px; }
+
+      .values-grid { grid-template-columns: 1fr; }
+      .value-item { padding: 14px 17px; }
+
+      section { padding: 52px 0; }
+      .course-grid { grid-template-columns: 1fr; gap: 15px; }
+      .course-card { min-height: 260px; padding: 23px; }
+      .fields { grid-template-columns: 1fr; }
+      .field-full { grid-column: auto; }
+      .form-card, .info-panel { padding: 22px; }
+      .hero-actions .btn { flex: 1 1 auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
   </style>
 </head>
+
 <body>
 <header>
   <div class="wrap nav">
-    <div class="brand">پایگاه مهارت‌آموزی نوجوانان مسجد فائق</div>
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">✦</div>
+      <div>
+        پایگاه مهارت‌آموزی نوجوانان مسجد فائق
+        <small>یادگیری، مهارت و رشد در مسیر تربیت</small>
+      </div>
+    </div>
+
     <nav aria-label="ناوبری اصلی">
       <a href="#courses">کلاس‌های مهارتی</a>
-      <a href="#schedule">برنامه حضور مجموعه</a>
-      <a href="#register">ثبت‌نام</a>
+      <a href="#schedule">برنامه مجموعه</a>
+      <a class="nav-cta" href="#register">ثبت‌نام</a>
     </nav>
   </div>
 </header>
@@ -428,116 +746,218 @@ footer {
 <div class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="eyebrow">یادگیری • تجربه • مهارت</span>
-      <h1>مهارت یاد بگیر؛<br>توانایی‌ات را به کار بگیر</h1>
-      <p>در پایگاه مهارت‌آموزی نوجوانان مسجد فائق، فرصت آشنایی با مهارت‌های کاربردی و ثبت‌نام در دوره‌های آموزشی را پیدا کن.</p>
-      <a class="btn btn-gold" href="#courses">مشاهده کلاس‌ها</a>
-      <a class="btn btn-light" href="#register" style="margin-right:8px">ثبت‌نام در کلاس</a>
+      <span class="eyebrow">پایگاه مهارت‌آموزی مسجد فائق</span>
+      <h1>استعدادت را بشناس؛<br><span>مهارتت را بساز.</span></h1>
+      <p>
+        اینجا فرصتی برای یادگیری، تجربه‌کردن و پرورش توانایی‌هاست؛
+        در کنار رفاقت، مسئولیت‌پذیری و رشد در محیط مسجد.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-gold" href="#courses">مشاهده کلاس‌ها ←</a>
+        <a class="btn btn-outline" href="#register">ثبت‌نام در دوره‌ها</a>
+      </div>
     </div>
-    <div class="hero-mark" aria-hidden="true">
-      <div class="symbol">✦</div>
-      <strong>استعدادت را کشف کن</strong>
-      <div>مسجد فائق؛ محیطی برای رشد و یادگیری</div>
+
+    <div class="hero-panel">
+      <div class="hero-emblem" aria-hidden="true">✦</div>
+      <h2>از یادگیری تا توانمندی</h2>
+      <p>هر مهارت، فرصتی تازه برای رشد و خدمت</p>
+      <div class="hero-ornament" aria-hidden="true">✧ ✦ ✧</div>
     </div>
   </div>
 </div>
 
 <main>
-<section id="courses">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>کلاس‌های مهارتی</h2>
-      <p>برای ثبت‌نام، یکی از دوره‌های زیر را انتخاب کن. زمان و جزئیات نهایی هر کلاس از سوی مجموعه اعلام می‌شود.</p>
-    </div>
-  <div class="course-grid" id="course-grid">
-      <article class="course-card">
-        <div class="course-icon" aria-hidden="true">💡</div>
-        <h3>نئون فلکسی</h3>
-        <p>آشنایی با ساخت تابلوها و نوشته‌های نوری و تجربه یک مهارت فنی و خلاقانه.</p>
-        <a class="btn" href="#register" data-course="نئون فلکسی">ثبت‌نام در این کلاس</a>
-      </article>
-      <article class="course-card">
-        <div class="course-icon" aria-hidden="true">🎨</div>
-        <h3>فتوشاپ</h3>
-        <p>آشنایی با طراحی گرافیکی و ویرایش تصویر برای تولید محتوای دیداری.</p>
-        <a class="btn" href="#register" data-course="فتوشاپ">ثبت‌نام در این کلاس</a>
-      </article>
-      <article class="course-card">
-        <div class="course-icon" aria-hidden="true">🎙️</div>
-        <h3>مداحی و سرود</h3>
-        <p>فرصتی برای تمرین اجرا، هماهنگی گروهی و مشارکت در برنامه‌های فرهنگی.</p>
-        <a class="btn" href="#register" data-course="مداحی/سرود">ثبت‌نام در این کلاس</a>
-      </article>
-    </div>
-    <p class="note">زمان دقیق، ظرفیت و هزینه کلاس‌ها پس از تأیید مسئولان مجموعه در سایت درج خواهد شد.</p>
-  </div>
-</section>
-
-<section id="schedule" class="schedule">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>برنامه حضور مجموعه</h2>
-      <p>نمای کلی برنامه هفتگی بر اساس فایل ارسالی مجموعه. این جدول با زمان‌بندی اختصاصی کلاس‌های مهارتی یکسان نیست.</p>
-    </div>
-    <div class="schedule-box">
-      <table>
-        <thead><tr><th>روز</th><th>برنامه</th><th>زمان</th></tr></thead>
-        <tbody>
-          <tr><td>یکشنبه</td><td>حلقه شهید هادی</td><td>۱۷ تا ۱۸:۳۰</td></tr>
-          <tr><td>یکشنبه</td><td>جلسه عرصه تعلیم و تربیت</td><td>۱۷ تا ۱۹</td></tr>
-          <tr><td>یکشنبه</td><td>حلقه شهید زین‌الدین ۲</td><td>۱۷:۳۰ تا ۱۹</td></tr>
-          <tr><td>یکشنبه</td><td>جودو</td><td>۱۹ تا ۲۰:۳۰</td></tr>
-          <tr><td>سه‌شنبه</td><td>جلسه کادر متوسطه اول</td><td>۱۷ تا ۱۹</td></tr>
-          <tr><td>سه‌شنبه</td><td>جودو</td><td>۱۹ تا ۲۰:۳۰</td></tr>
-          <tr><td>سه‌شنبه</td><td>حلقه شهید باکری</td><td>۱۹ تا ۲۰:۳۰</td></tr>
-          <tr><td>چهارشنبه</td><td>سانس شهید عبدی ۲</td><td>۱۵:۳۰ تا ۱۷</td></tr>
-          <tr><td>چهارشنبه</td><td>سانس شهید زین‌الدین ۲</td><td>۱۷ تا ۱۹</td></tr>
-          <tr><td>چهارشنبه</td><td>حلقه شهید عبدی ۱ و ۲</td><td>۱۷ تا ۱۹</td></tr>
-          <tr><td>چهارشنبه</td><td>حلقه شهید زین‌الدین ۱ و سانس شهید هادی</td><td>۱۹ تا ۲۰:۳۰</td></tr>
-          <tr><td>پنجشنبه</td><td>هیئت نوجوانان</td><td>۱۵ تا ۱۶:۳۰</td></tr>
-          <tr><td>پنجشنبه</td><td>سانس شهید زین‌الدین ۱</td><td>۱۷ تا ۱۹</td></tr>
-          <tr><td>پنجشنبه</td><td>سانس شهید عبدی ۱</td><td>۱۹ تا ۲۰:۳۰</td></tr>
-          <tr><td>جمعه</td><td>سانس کادر</td><td>۱۹ تا ۲۰:۳۰</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="note">در فایل ارسالی برای شنبه و دوشنبه برنامه مشخصی ثبت نشده بود. قبل از انتشار عمومی، نام‌ها و ساعت‌ها را با مسئول برنامه تطبیق دهید.</p>
-  </div>
-</section>
-
-<section id="register">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>فرم ثبت‌نام کلاس</h2>
-      <p>اطلاعات را دقیق وارد کن. ثبت درخواست به معنی تأیید نهایی ثبت‌نام نیست.</p>
-    </div>
-    <div class="form-layout">
-      <aside class="info-panel">
-        <h3>قبل از ثبت‌نام</h3>
-        <p>اطلاعات تماس باید معتبر باشد. برای ثبت‌نام نوجوانان، تأیید ولی یا سرپرست الزامی است.</p>
-        <p>پس از ارسال فرم، مسئولان مجموعه برای پیگیری درخواست با شما تماس خواهند گرفت.</p>
-      </aside>
-      <div class="form-card">
-        <form id="registration-form">
-          <div class="fields">
-            <div><label for="student_name">نام و نام خانوادگی نوجوان</label><input id="student_name" name="student_name" required maxlength="100" autocomplete="name"></div>
-            <div><label for="grade">پایه تحصیلی</label><select id="grade" name="grade" required><option value="">انتخاب کنید</option><option>هفتم</option><option>هشتم</option><option>نهم</option><option>دهم</option><option>یازدهم</option><option>دوازدهم</option><option>سایر</option></select></div>
-            <div><label for="phone">شماره تماس</label><input id="phone" name="phone" type="tel" required maxlength="20" autocomplete="tel" placeholder="شماره تماس"></div>
-            <div><label for="guardian_name">نام ولی یا سرپرست</label><input id="guardian_name" name="guardian_name" required maxlength="100"></div>
-            <div class="field-full"><label for="course_id">کلاس موردنظر</label><select id="course_id" name="course_id" required><option value="">در حال دریافت فهرست کلاس‌ها...</option></select></div>
-          </div>
-          <label class="consent"><input id="guardian_consent" type="checkbox" required><span>ولی یا سرپرست از ثبت درخواست این کلاس مطلع است و رضایت دارد.</span></label>
-          <button class="btn btn-gold" type="submit">ارسال درخواست ثبت‌نام</button>
-          <div id="form-message" role="status" aria-live="polite"></div>
-        </form>
+  <div class="wrap values">
+    <div class="values-grid">
+      <div class="value-item">
+        <div class="value-icon" aria-hidden="true">◈</div>
+        <div>
+          <strong>یادگیری کاربردی</strong>
+          <small>آموختن با تجربه و تمرین</small>
+        </div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon" aria-hidden="true">✦</div>
+        <div>
+          <strong>رشد و خودباوری</strong>
+          <small>شناخت استعدادها و توانایی‌ها</small>
+        </div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon" aria-hidden="true">❖</div>
+        <div>
+          <strong>رفاقت و مسئولیت</strong>
+          <small>رشد در کنار یکدیگر</small>
+        </div>
       </div>
     </div>
   </div>
-</section>
+
+  <section id="courses">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-kicker">فرصت‌های یادگیری</span>
+        <h2>کلاس‌های مهارتی</h2>
+        <p>
+          مهارتی را انتخاب کن که به آن علاقه داری.
+          برای ثبت درخواست، روی دکمه کلاس موردنظر بزن.
+        </p>
+      </div>
+
+      <div class="course-grid" id="course-grid">
+        <article class="course-card">
+          <div class="course-icon" aria-hidden="true">✧</div>
+          <h3>نئون فلکسی</h3>
+          <p>آشنایی با ساخت تابلوها و نوشته‌های نوری و تجربه یک مهارت فنی و خلاقانه.</p>
+          <a class="btn" href="#register" data-course="نئون فلکسی">ثبت‌نام در این کلاس ←</a>
+        </article>
+
+        <article class="course-card">
+          <div class="course-icon" aria-hidden="true">▧</div>
+          <h3>فتوشاپ</h3>
+          <p>آشنایی با طراحی گرافیکی و ویرایش تصویر برای تولید محتوای دیداری.</p>
+          <a class="btn" href="#register" data-course="فتوشاپ">ثبت‌نام در این کلاس ←</a>
+        </article>
+
+        <article class="course-card">
+          <div class="course-icon" aria-hidden="true">♫</div>
+          <h3>مداحی و سرود</h3>
+          <p>تمرین اجرا، هماهنگی گروهی و مشارکت در برنامه‌های فرهنگی و مذهبی.</p>
+          <a class="btn" href="#register" data-course="مداحی/سرود">ثبت‌نام در این کلاس ←</a>
+        </article>
+      </div>
+
+      <p class="note">
+        زمان، ظرفیت و هزینه نهایی دوره‌ها را مسئولان مجموعه اعلام می‌کنند.
+      </p>
+    </div>
+  </section>
+
+  <section id="schedule" class="schedule">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-kicker">تقویم مجموعه</span>
+        <h2>برنامه حضور مجموعه</h2>
+        <p>
+          این جدول نمای کلی برنامه هفتگی مجموعه است و لزوماً
+          با زمان‌بندی کلاس‌های مهارتی یکسان نیست.
+        </p>
+      </div>
+
+      <div class="schedule-box">
+        <table>
+          <thead>
+            <tr><th>روز</th><th>برنامه</th><th>زمان</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>یکشنبه</td><td>حلقه شهید هادی</td><td>۱۷ تا ۱۸:۳۰</td></tr>
+            <tr><td>یکشنبه</td><td>جلسه عرصه تعلیم و تربیت</td><td>۱۷ تا ۱۹</td></tr>
+            <tr><td>یکشنبه</td><td>حلقه شهید زین‌الدین ۲</td><td>۱۷:۳۰ تا ۱۹</td></tr>
+            <tr><td>یکشنبه</td><td>جودو</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+            <tr><td>سه‌شنبه</td><td>جلسه کادر متوسطه اول</td><td>۱۷ تا ۱۹</td></tr>
+            <tr><td>سه‌شنبه</td><td>جودو</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+            <tr><td>سه‌شنبه</td><td>حلقه شهید باکری</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+            <tr><td>چهارشنبه</td><td>سانس شهید عبدی ۲</td><td>۱۵:۳۰ تا ۱۷</td></tr>
+            <tr><td>چهارشنبه</td><td>سانس شهید زین‌الدین ۲</td><td>۱۷ تا ۱۹</td></tr>
+            <tr><td>چهارشنبه</td><td>حلقه شهید عبدی ۱ و ۲</td><td>۱۷ تا ۱۹</td></tr>
+            <tr><td>چهارشنبه</td><td>حلقه شهید زین‌الدین ۱ و سانس شهید هادی</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+            <tr><td>پنجشنبه</td><td>هیئت نوجوانان</td><td>۱۵ تا ۱۶:۳۰</td></tr>
+            <tr><td>پنجشنبه</td><td>سانس شهید زین‌الدین ۱</td><td>۱۷ تا ۱۹</td></tr>
+            <tr><td>پنجشنبه</td><td>سانس شهید عبدی ۱</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+            <tr><td>جمعه</td><td>سانس کادر</td><td>۱۹ تا ۲۰:۳۰</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">پیش از انتشار عمومی، نام برنامه‌ها و ساعت‌ها را با مسئول مجموعه تطبیق دهید.</p>
+    </div>
+  </section>
+
+  <section id="register">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-kicker">شروع یک تجربه تازه</span>
+        <h2>درخواست ثبت‌نام</h2>
+        <p>اطلاعات را دقیق وارد کن. ارسال فرم به معنی تأیید نهایی ثبت‌نام نیست.</p>
+      </div>
+
+      <div class="form-layout">
+        <aside class="info-panel">
+          <h3>قدم اول را بردار</h3>
+          <p>
+            با انتخاب یک دوره، فرصت یادگیری و تجربه مهارتی تازه‌ای را برای خودت فراهم کن.
+          </p>
+          <div class="info-list">
+            <div><span>✦</span><div>اطلاعات را با دقت وارد کن.</div></div>
+            <div><span>✦</span><div>کلاس موردنظرت را انتخاب کن.</div></div>
+            <div><span>✦</span><div>برای ثبت‌نام نوجوانان، رضایت ولی یا سرپرست لازم است.</div></div>
+            <div><span>✦</span><div>مسئولان مجموعه درخواست را پیگیری می‌کنند.</div></div>
+          </div>
+        </aside>
+
+        <div class="form-card">
+          <h3>فرم اطلاعات نوجوان</h3>
+          <p class="form-intro">فیلدهای ستاره‌دار یا مشخص‌شده را کامل وارد کن.</p>
+
+          <form id="registration-form">
+            <div class="fields">
+              <div>
+                <label for="student_name">نام و نام خانوادگی نوجوان</label>
+                <input id="student_name" name="student_name" required maxlength="100" autocomplete="name">
+              </div>
+
+              <div>
+                <label for="grade">پایه تحصیلی</label>
+                <select id="grade" name="grade" required>
+                  <option value="">انتخاب کنید</option>
+                  <option>هفتم</option>
+                  <option>هشتم</option>
+                  <option>نهم</option>
+                  <option>دهم</option>
+                  <option>یازدهم</option>
+                  <option>دوازدهم</option>
+                  <option>سایر</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="phone">شماره تماس</label>
+                <input id="phone" name="phone" type="tel" required maxlength="20" autocomplete="tel" placeholder="شماره تماس">
+              </div>
+
+              <div>
+                <label for="guardian_name">نام ولی یا سرپرست</label>
+                <input id="guardian_name" name="guardian_name" required maxlength="100">
+              </div>
+
+              <div class="field-full">
+                <label for="course_id">کلاس موردنظر</label>
+                <select id="course_id" name="course_id" required>
+                  <option value="">در حال دریافت فهرست کلاس‌ها...</option>
+                </select>
+              </div>
+            </div>
+
+            <label class="consent">
+              <input id="guardian_consent" type="checkbox" required>
+              <span>ولی یا سرپرست از ثبت درخواست این کلاس مطلع است و رضایت دارد.</span>
+            </label>
+
+            <button class="btn btn-gold" type="submit">ارسال درخواست ثبت‌نام ←</button>
+            <div id="form-message" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
-  <div class="wrap">پایگاه مهارت‌آموزی نوجوانان مسجد فائق · یادگیری، مهارت و رشد</div>
+  <div class="wrap">
+    <div class="footer-title">پایگاه مهارت‌آموزی نوجوانان مسجد فائق</div>
+    <p>یادگیری، مهارت و رشد در مسیر تربیت</p>
+    <div class="footer-bottom">مسجد فائق · تمامی حقوق محتوای این پایگاه محفوظ است.</div>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
