@@ -251,6 +251,14 @@ async function startRegistrationApp() {
 console.log("Active courses:", activeCourses);
       const { data: insertedRows, error: insertError } = await client
         .from("registrations")
+        console.log("REGISTRATION DEBUG", {
+  course_id: record.course_id,
+  guardian_consent: record.guardian_consent,
+  student_name_present: Boolean(record.student_name?.trim()),
+  grade_present: Boolean(record.grade?.trim()),
+  phone_present: Boolean(record.phone?.trim()),
+  guardian_name_present: Boolean(record.guardian_name?.trim())
+});
         .insert([record])
         .select("id")
         .limit(1);
