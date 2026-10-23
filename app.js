@@ -1,4 +1,6 @@
 
+"use strict";
+
 const form = document.getElementById("registration-form");
 const courseSelect = document.getElementById("course_id");
 const message = document.getElementById("form-message");
@@ -8,6 +10,22 @@ const APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbxnveLjHuRJN3-X6BBeVn_X26hRUU0K2Ou_-CrX5m8ZjDoy0UX55RjoGwUxrOc5Fl3N/exec";
 
 const MAX_RECEIPT_SIZE = 2 * 1024 * 1024;
+const ALLOWED_FILE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "application/pdf"
+];
+
+let activeCourses = [];
+let isSubmitting = false;
+
+function showMessage(text) {
+  if (message) message.textContent = text;
+}
+
+function formatToman(value) {
+  return Number(value || 0).toLocaleString("fa-IR") + " تومان";
+}
 
 function getCourseIcon(title = "") {
   if (title.includes("نئون")) return "💡";
@@ -16,18 +34,8 @@ function getCourseIcon(title = "") {
   return "📘";
 }
 
-function showMessage(text) {
-  if (message) message.textContent = text;
-}
-
-function formatToman(value) {
-  const amount = Number(value || 0);
-  return amount.toLocaleString("fa-IR") + " تومان";
-}
-
 function getOrCreateReceiptInput() {
   let input = document.getElementById("receipt_file");
-
   if (input || !form) return input;
 
   const wrapper = document.createElement("div");
@@ -41,7 +49,7 @@ function getOrCreateReceiptInput() {
   input.type = "file";
   input.id = "receipt_file";
   input.name = "receipt_file";
-  input.accept = "image/jpeg,image/png,application/pdf";
+  input.accept = ALLOWED_FILE_TYPES.join(",");
   input.required = true;
 
   const help = document.createElement("small");
@@ -50,7 +58,8 @@ function getOrCreateReceiptInput() {
   wrapper.append(label, input, help);
 
   const consent = document.getElementById("guardian_consent");
-  const consentWrapper = consent?.closest(".form-group") || consent?.parentElement;
+  const consentWrapper =
+    consent?.closest(".form-group") || consent?.parentElement;
 
   if (consentWrapper && consentWrapper.parentElement === form) {
     form.insertBefore(wrapper, consentWrapper);
@@ -77,39 +86,14 @@ function fileToBase64(file) {
       resolve(result.slice(commaIndex + 1));
     };
 
-    reader.onerror = () => reject(new Error("خواندن فایل فیش ناموفق بود."));
+    reader.onerror = () =>
+      reject(new Error("خواندن فایل فیش ناموفق بود."));
+
     reader.readAsDataURL(file);
   });
 }
-let activeCourses = [];
-async function startRegistrationApp() {
-  if (
-    !window.supabase ||
-    !window.SUPABASE_URL ||
-    !window.SUPABASE_ANON_KEY
-  ) {
-    showMessage("اتصال سامانه تنظیم نشده است. لطفاً بعداً تلاش کنید.");
-    return;
-  }
 
-  const client = window.supabase.createClient(
-    window.SUPABASE_URL,
-    window.SUPABASE_ANON_KEY
-  );
-
-  const { data: courses, error } = await client
-    .from("courses")
-    .select("id, title, description, price_toman")
-    .eq("is_active", true)
-    .order("title");
-
-  if (error) {
-    console.error("Course loading error:", error);
-    showMessage("دریافت کلاس‌ها ناموفق بود.");
-    return;
-  }
-
- activeCourses = courses || [];
+function renderCourses() {
   if (courseSelect) {
     courseSelect.replaceChildren();
 
@@ -129,50 +113,93 @@ async function startRegistrationApp() {
     }
   }
 
-  if (courseGrid) {
-    courseGrid.replaceChildren();
+  if (!courseGrid) return;
 
-    for (const course of activeCourses) {
-      const card = document.createElement("article");
-      card.className = "course-card";
+  courseGrid.replaceChildren();
 
-      const icon = document.createElement("div");
-      icon.className = "course-icon";
-      icon.setAttribute("aria-hidden", "true");
-      icon.textContent = getCourseIcon(course.title);
+  for (const course of activeCourses) {
+    const card = document.createElement("article");
+    card.className = "course-card";
 
-      const heading = document.createElement("h3");
-      heading.textContent = course.title || "کلاس آموزشی";
+    const icon = document.createElement("div");
+    icon.className = "course-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = getCourseIcon(course.title);
 
-      const description = document.createElement("p");
-      description.textContent =
-        course.description || "توضیحات این کلاس به‌زودی اضافه می‌شود.";
+    const heading = document.createElement("h3");
+    heading.textContent = course.title || "کلاس آموزشی";
 
-      const price = document.createElement("p");
-      price.className = "course-price";
-      price.textContent = "هزینه: " + formatToman(course.price_toman);
+    const description = document.createElement("p");
+    description.textContent =
+      course.description || "توضیحات این کلاس به‌زودی اضافه می‌شود.";
 
-      const link = document.createElement("a");
-      link.className = "btn";
-      link.href = "#register";
-      link.textContent = "ثبت‌نام در این کلاس";
+    const price = document.createElement("p");
+    price.className = "course-price";
+    price.textContent = "هزینه: " + formatToman(course.price_toman);
 
-      link.addEventListener("click", () => {
-        if (courseSelect) courseSelect.value = String(course.id);
-      });
+    const link = document.createElement("a");
+    link.className = "btn";
+    link.href = "#register";
+    link.textContent = "ثبت‌نام در این کلاس";
 
-      card.append(icon, heading, description, price, link);
-      courseGrid.appendChild(card);
-    }
+    link.addEventListener("click", () => {
+      if (courseSelect) courseSelect.value = String(course.id);
+    });
+
+    card.append(icon, heading, description, price, link);
+    courseGrid.appendChild(card);
+  }
+}
+
+async function startRegistrationApp() {
+  if (!form || !courseSelect || !message) {
+    console.error("فرم ثبت‌نام یا یکی از اجزای ضروری پیدا نشد.");
+    return;
   }
 
-  if (!form || !courseSelect || !message) return;
+  if (
+    !window.supabase ||
+    !window.SUPABASE_URL ||
+    !window.SUPABASE_ANON_KEY
+  ) {
+    showMessage("اتصال سامانه تنظیم نشده است.");
+    return;
+  }
+
+  const client = window.supabase.createClient(
+    window.SUPABASE_URL,
+    window.SUPABASE_ANON_KEY
+  );
+
+  try {
+    const { data: courses, error } = await client
+      .from("courses")
+      .select("id, title, description, price_toman")
+      .eq("is_active", true)
+      .order("title");
+
+    if (error) throw error;
+
+    activeCourses = courses || [];
+    renderCourses();
+
+    if (activeCourses.length === 0) {
+      showMessage("در حال حاضر کلاسی برای ثبت‌نام وجود ندارد.");
+      return;
+    }
+  } catch (error) {
+    console.error("Course loading error:", error);
+    showMessage("دریافت کلاس‌ها ناموفق بود.");
+    return;
+  }
 
   const receiptInput = getOrCreateReceiptInput();
+  const submitButton = form.querySelector('[type="submit"]');
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    if (isSubmitting) return;
     if (!form.reportValidity()) return;
 
     const consent = document.getElementById("guardian_consent");
@@ -182,9 +209,12 @@ async function startRegistrationApp() {
       return;
     }
 
-    if (!courseSelect.value) {
-      showMessage("لطفاً یک کلاس انتخاب کنید.");
-      courseSelect.focus();
+    const selectedCourse = activeCourses.find(
+      (course) => String(course.id) === courseSelect.value
+    );
+
+    if (!selectedCourse) {
+      showMessage("لطفاً یک کلاس معتبر انتخاب کنید.");
       return;
     }
 
@@ -196,13 +226,7 @@ async function startRegistrationApp() {
       return;
     }
 
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "application/pdf"
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
       showMessage("فیش باید JPG، PNG یا PDF باشد.");
       return;
     }
@@ -212,21 +236,14 @@ async function startRegistrationApp() {
       return;
     }
 
-    const selectedCourse = activeCourses.find(
-      (course) => String(course.id) === courseSelect.value
-    );
-
-    if (!selectedCourse) {
-      showMessage("کلاس انتخاب‌شده معتبر نیست؛ صفحه را تازه‌سازی کنید.");
-      return;
-    }
-
     const record = {
-      student_name: document.getElementById("student_name").value.trim(),
-      grade: document.getElementById("grade").value,
+      student_name:
+        document.getElementById("student_name").value.trim(),
+      grade: document.getElementById("grade").value.trim(),
       phone: document.getElementById("phone").value.trim(),
-      guardian_name: document.getElementById("guardian_name").value.trim(),
-      course_id: courseSelect.value,
+      guardian_name:
+        document.getElementById("guardian_name").value.trim(),
+      course_id: Number(selectedCourse.id),
       guardian_consent: true
     };
 
@@ -234,59 +251,38 @@ async function startRegistrationApp() {
       !record.student_name ||
       !record.grade ||
       !record.phone ||
-      !record.guardian_name
+      !record.guardian_name ||
+      !Number.isInteger(record.course_id)
     ) {
-      showMessage("لطفاً تمام اطلاعات ضروری را تکمیل کنید.");
+      showMessage("لطفاً اطلاعات ضروری را به‌درستی تکمیل کنید.");
       return;
     }
 
-    const submitButton = form.querySelector('[type="submit"]');
-
+    isSubmitting = true;
     if (submitButton) submitButton.disabled = true;
+
     showMessage("در حال ثبت اطلاعات؛ لطفاً صفحه را نبندید...");
 
     try {
-      // مرحله اول: ذخیره ثبت‌نام در Supabase
-      console.log("Registration data:", record);
-console.log("Active courses:", activeCourses);
-      const { data: insertedRows, error: insertError } = await client
+      // مرحله اول: ثبت اطلاعات در Supabase.
+      // عمداً از select() استفاده نمی‌کنیم؛ اطلاعات ثبت‌نام عمومی نیست.
+      const { error: insertError } = await client
         .from("registrations")
-        console.log("REGISTRATION DEBUG", {
-  course_id: record.course_id,
-  guardian_consent: record.guardian_consent,
-  student_name_present: Boolean(record.student_name?.trim()),
-  grade_present: Boolean(record.grade?.trim()),
-  phone_present: Boolean(record.phone?.trim()),
-  guardian_name_present: Boolean(record.guardian_name?.trim())
-});
-        .insert([record])
-        .select("id")
-        .limit(1);
-console.log("DEBUG registration record:", record);
+        .insert([record]);
+
       if (insertError) {
         console.error("Registration error:", insertError);
         showMessage(
-          "ثبت‌نام در سامانه انجام نشد. لطفاً بعداً تلاش کنید."
+          "ثبت‌نام در سامانه انجام نشد. خطای ثبت در Supabase را بررسی کنید."
         );
         return;
       }
 
-      const registrationId = insertedRows?.[0]?.id;
-
-      if (!registrationId) {
-        showMessage(
-          "ثبت‌نام ذخیره شد، اما شناسه آن دریافت نشد. برای جلوگیری از ثبت تکراری، دوباره ارسال نکنید."
-        );
-        return;
-      }
-
+      // مرحله دوم: آماده‌سازی و ارسال اطلاعات و فیش به Google Apps Script.
       showMessage("ثبت‌نام ذخیره شد؛ در حال ارسال فیش...");
 
       const receiptBase64 = await fileToBase64(file);
 
-      // مرحله دوم: ارسال اطلاعات و فیش به Google Apps Script
-      // no-cors پاسخ قابل‌خواندن نمی‌دهد؛ ذخیره موفق فایل از اینجا
-      // قابل تأیید نیست و باید در Google Drive و Sheets بررسی شود.
       await fetch(APPS_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
@@ -296,7 +292,7 @@ console.log("DEBUG registration record:", record);
         body: JSON.stringify({
           ...record,
           course_title: selectedCourse.title,
-          registration_id: String(registrationId),
+          registration_id: "",
           receipt_name: file.name,
           receipt_mime_type: file.type,
           receipt_base64: receiptBase64
@@ -306,14 +302,17 @@ console.log("DEBUG registration record:", record);
       form.reset();
 
       showMessage(
-        "ثبت‌نام در سامانه ذخیره شد. ارسال فیش انجام شد، اما تأیید ذخیره آن هنوز لازم است. وضعیت پرداخت پس از بررسی مسئول مربوط مشخص می‌شود."
+        "ثبت‌نام در سامانه ذخیره شد. درخواست ارسال فیش انجام شد؛ " +
+        "برای اطمینان از ذخیره فیش، Google Sheets و Google Drive را بررسی کنید."
       );
     } catch (error) {
       console.error("Submission error:", error);
       showMessage(
-        "در ارسال اطلاعات یا فیش مشکلی پیش آمد. ممکن است ثبت‌نام قبلاً ذخیره شده باشد؛ قبل از ارسال مجدد، ثبت‌نام را بررسی کنید."
+        "در ارسال اطلاعات یا فیش مشکلی پیش آمد. " +
+        "پیش از ارسال دوباره، جدول ثبت‌نام‌ها را بررسی کنید."
       );
     } finally {
+      isSubmitting = false;
       if (submitButton) submitButton.disabled = false;
     }
   });
