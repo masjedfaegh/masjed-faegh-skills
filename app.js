@@ -254,7 +254,7 @@ console.log("Active courses:", activeCourses);
         .insert([record])
         .select("id")
         .limit(1);
-
+console.log("DEBUG registration record:", record);
       if (insertError) {
         console.error("Registration error:", insertError);
         showMessage(
