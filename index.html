@@ -4,33 +4,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#123c2d">
+  <meta name="theme-color" content="#103b32">
   <meta name="description" content="پایگاه مهارت‌آموزی نوجوانان مسجد فائق؛ بستری برای یادگیری مهارت، خلاقیت و رشد نوجوانان">
   <title>پایگاه مهارت‌آموزی نوجوانان مسجد فائق</title>
 
   <style>
     :root {
-      --green: #123c2d;
-      --green-dark: #0b2a20;
-      --green-light: #245943;
-      --cream: #f8f5eb;
-      --white: #fffdf8;
-      --gold: #d8b46a;
-      --gold-dark: #b58b3b;
-      --text: #24352c;
-      --muted: #68776d;
-      --border: #e6e3d7;
-      --shadow: 0 16px 42px rgba(18, 60, 45, .09);
+      --green: #146b50;
+      --green-dark: #103b32;
+      --green-light: #23866b;
+      --cream: #fff9ed;
+      --white: #ffffff;
+      --gold: #ffd166;
+      --gold-dark: #a76f0c;
+      --turquoise: #35c9bd;
+      --blue-light: #dff3ff;
+      --pink-light: #ffe4e8;
+      --text: #263a35;
+      --muted: #687c76;
+      --border: #e4e9df;
+      --shadow: 0 16px 42px rgba(16, 59, 50, .09);
       --radius: 22px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: 90px;
+      scroll-padding-top: 95px;
     }
 
     body {
@@ -42,27 +43,10 @@
       overflow-wrap: anywhere;
     }
 
-    img {
-      max-width: 100%;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-    }
-
-    button,
-    a,
-    input,
-    select {
-      -webkit-tap-highlight-color: transparent;
-    }
+    img { max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+    button, a, input, select { -webkit-tap-highlight-color: transparent; }
 
     .container {
       width: min(1120px, calc(100% - 40px));
@@ -73,9 +57,9 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      background: rgba(18, 60, 45, .97);
-      color: var(--white);
-      border-bottom: 1px solid rgba(216, 180, 106, .25);
+      background: rgba(16, 59, 50, .97);
+      color: white;
+      border-bottom: 2px solid rgba(255, 209, 102, .65);
       backdrop-filter: blur(12px);
     }
 
@@ -114,7 +98,7 @@
 
     .brand-subtitle {
       display: block;
-      color: #d9e3dc;
+      color: #d9e9e0;
       font-size: 11px;
       font-weight: normal;
     }
@@ -126,14 +110,8 @@
       font-size: 13px;
     }
 
-    .nav-links a {
-      color: #f1f3ed;
-      transition: color .2s;
-    }
-
-    .nav-links a:hover {
-      color: var(--gold);
-    }
+    .nav-links a { color: #f1f7f3; }
+    .nav-links a:hover, .footer-links a:hover { color: var(--gold); }
 
     .nav-cta {
       display: inline-flex;
@@ -149,42 +127,35 @@
     .hero {
       position: relative;
       overflow: hidden;
-      padding: 74px 0 66px;
+      padding: 70px 0 65px;
       background:
-        radial-gradient(ellipse at 12% 10%, rgba(216,180,106,.15), transparent 32%),
-        linear-gradient(135deg, var(--green-dark), var(--green));
-      color: var(--white);
+        radial-gradient(ellipse at 10% 10%, rgba(53,201,189,.20), transparent 32%),
+        radial-gradient(ellipse at 90% 90%, rgba(255,209,102,.13), transparent 35%),
+        linear-gradient(135deg, #103b32, #146b50);
+      color: white;
     }
 
-    .hero::before,
-    .hero::after {
+    .hero::before, .hero::after {
       content: "";
       position: absolute;
       width: 240px;
       height: 240px;
-      border: 1px solid rgba(216,180,106,.13);
+      border: 1px solid rgba(255,209,102,.17);
       border-radius: 38% 62% 58% 42%;
       transform: rotate(30deg);
       pointer-events: none;
     }
 
-    .hero::before {
-      top: -135px;
-      left: -80px;
-    }
-
-    .hero::after {
-      right: -160px;
-      bottom: -160px;
-    }
+    .hero::before { top: -135px; left: -80px; }
+    .hero::after { right: -160px; bottom: -160px; }
 
     .hero-grid {
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: 1.15fr .85fr;
+      grid-template-columns: 1.05fr .95fr;
       align-items: center;
-      gap: 48px;
+      gap: 44px;
     }
 
     .eyebrow {
@@ -201,15 +172,10 @@
       content: "";
       width: 24px;
       height: 2px;
-      background: var(--gold);
+      background: var(--turquoise);
     }
 
-    h1,
-    h2,
-    h3,
-    p {
-      overflow-wrap: anywhere;
-    }
+    h1, h2, h3, p { overflow-wrap: anywhere; }
 
     .hero h1 {
       margin: 0;
@@ -219,14 +185,12 @@
       letter-spacing: -.7px;
     }
 
-    .hero h1 span {
-      color: var(--gold);
-    }
+    .hero h1 span { color: var(--gold); }
 
     .hero-description {
       max-width: 560px;
       margin: 20px 0 28px;
-      color: #e0e9e2;
+      color: #e0eee6;
       font-size: 15px;
       line-height: 2.2;
     }
@@ -251,93 +215,57 @@
       transition: transform .2s, background .2s;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
-    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-gold { background: var(--gold); color: var(--green-dark); }
+    .btn-outline { border-color: rgba(255,255,255,.45); color: white; }
+    .btn-outline:hover { background: rgba(255,255,255,.08); }
+    .btn-green { background: var(--green); color: white; }
+    .btn-green:hover { background: var(--green-dark); }
 
-    .btn-gold {
-      background: var(--gold);
-      color: var(--green-dark);
-    }
-
-    .btn-outline {
-      border-color: rgba(255,255,255,.35);
-      color: white;
-      background: transparent;
-    }
-
-    .btn-green {
-      background: var(--green);
-      color: white;
-    }
-
-    .hero-visual {
+    .hero-photo {
+      position: relative;
       min-width: 0;
-    }
-
-    /* محل افزودن عکس واقعی مسجد در آینده */
-    .photo-placeholder {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      min-height: 300px;
-      padding: 28px;
       overflow: hidden;
-      text-align: center;
-      border: 1px solid rgba(216,180,106,.45);
+      border: 3px solid rgba(255,209,102,.8);
       border-radius: 30px 30px 30px 8px;
-      background:
-        radial-gradient(circle at 50% 30%, rgba(216,180,106,.16), transparent 40%),
-        linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.02));
-      box-shadow: 0 25px 60px rgba(0,0,0,.14);
+      background: #dff3ff;
+      box-shadow: 0 25px 60px rgba(0,0,0,.2);
     }
 
-    .photo-placeholder::before {
-      content: "";
-      position: absolute;
-      inset: 15px;
-      border: 1px dashed rgba(216,180,106,.22);
-      border-radius: 23px 23px 23px 5px;
-      pointer-events: none;
+    .hero-photo > img {
+      display: block;
+      width: 100%;
+      height: 330px;
+      object-fit: cover;
     }
 
-    .placeholder-symbol {
-      position: relative;
-      display: grid;
-      place-items: center;
-      width: 88px;
-      height: 88px;
-      border: 1px solid rgba(216,180,106,.6);
-      border-radius: 50%;
+    .hero-photo-caption {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 20px;
+      background: linear-gradient(100deg, #103b32, #146b50);
+      color: white;
+    }
+
+    .hero-photo-caption > span {
       color: var(--gold);
-      font-size: 43px;
+      font-size: 30px;
     }
 
-    .photo-placeholder h2 {
-      position: relative;
-      margin: 0;
+    .hero-photo-caption strong {
       color: var(--gold);
-      font-size: 22px;
+      font-size: 16px;
     }
 
-    .photo-placeholder p {
-      position: relative;
-      margin: 0;
-      max-width: 290px;
-      color: #e1e8e0;
-      font-size: 13px;
+    .hero-photo-caption p {
+      margin: 3px 0 0;
+      color: #e5f5ee;
+      font-size: 12px;
     }
 
-    .section {
-      padding: 76px 0;
-    }
-
-    .section-white {
-      background: var(--white);
-    }
+    .section { padding: 76px 0; }
+    .section-white { background: white; }
 
     .section-heading {
       max-width: 690px;
@@ -359,10 +287,26 @@
       line-height: 1.7;
     }
 
-    .section-heading p {
+    .section-heading > p:last-child {
       margin: 0;
       color: var(--muted);
       font-size: 14px;
+    }
+
+    .about-photo {
+      margin-bottom: 34px;
+      overflow: hidden;
+      border: 3px solid white;
+      border-radius: 26px;
+      background: #dff3ff;
+      box-shadow: var(--shadow);
+    }
+
+    .about-photo img {
+      display: block;
+      width: 100%;
+      max-height: 340px;
+      object-fit: cover;
     }
 
     .values-grid {
@@ -375,9 +319,12 @@
       padding: 26px 23px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: var(--white);
+      background: white;
       box-shadow: 0 8px 25px rgba(18,60,45,.035);
+      transition: transform .2s;
     }
+
+    .value-card:hover { transform: translateY(-4px); }
 
     .value-icon {
       display: grid;
@@ -386,10 +333,13 @@
       height: 49px;
       margin-bottom: 15px;
       border-radius: 15px;
-      background: #edf2e9;
       color: var(--green);
       font-size: 23px;
     }
+
+    .value-card:nth-child(1) .value-icon { background: var(--blue-light); }
+    .value-card:nth-child(2) .value-icon { background: #d8f7ed; }
+    .value-card:nth-child(3) .value-icon { background: var(--pink-light); }
 
     .value-card h3 {
       margin: 0 0 8px;
@@ -417,45 +367,48 @@
       overflow: hidden;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: var(--white);
+      background: white;
       box-shadow: var(--shadow);
       transition: transform .2s, box-shadow .2s;
     }
 
     .course-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 22px 48px rgba(18,60,45,.12);
+      transform: translateY(-5px);
+      box-shadow: 0 22px 48px rgba(18,60,45,.13);
     }
 
     .course-art {
       position: relative;
       display: grid;
       place-items: center;
-      min-height: 150px;
+      min-height: 155px;
       overflow: hidden;
-      background: linear-gradient(135deg, #e8eadb, #f5f0df);
     }
 
-    .course-art::before,
-    .course-art::after {
+    .course-card:nth-child(1) .course-art {
+      background: linear-gradient(135deg, #dff3ff, #b8e3ff);
+    }
+
+    .course-card:nth-child(2) .course-art {
+      background: linear-gradient(135deg, #d8f7ed, #a6e8d7);
+    }
+
+    .course-card:nth-child(3) .course-art {
+      background: linear-gradient(135deg, #fff0b8, #ffdb8b);
+    }
+
+    .course-art::before, .course-art::after {
       content: "";
       position: absolute;
       width: 125px;
       height: 125px;
-      border: 1px solid rgba(18,60,45,.12);
+      border: 1px solid rgba(18,60,45,.13);
       border-radius: 30%;
       transform: rotate(35deg);
     }
 
-    .course-art::before {
-      top: -70px;
-      right: -25px;
-    }
-
-    .course-art::after {
-      bottom: -90px;
-      left: -15px;
-    }
+    .course-art::before { top: -70px; right: -25px; }
+    .course-art::after { bottom: -90px; left: -15px; }
 
     .course-icon {
       position: relative;
@@ -483,7 +436,7 @@
       display: inline-block;
       padding: 4px 10px;
       border-radius: 8px;
-      background: #f1ead8;
+      background: #fff0c9;
       color: #785d28;
       font-size: 11px;
       font-weight: bold;
@@ -511,20 +464,19 @@
       overflow-x: auto;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: var(--white);
+      background: white;
       box-shadow: var(--shadow);
       -webkit-overflow-scrolling: touch;
     }
 
     .schedule-table {
       width: 100%;
+      min-width: 520px;
       border-collapse: collapse;
       text-align: right;
-      min-width: 520px;
     }
 
-    .schedule-table th,
-    .schedule-table td {
+    .schedule-table th, .schedule-table td {
       padding: 17px 21px;
       border-bottom: 1px solid var(--border);
       font-size: 13px;
@@ -536,14 +488,9 @@
       font-weight: bold;
     }
 
-    .schedule-table tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .schedule-table td:first-child {
-      color: var(--green);
-      font-weight: bold;
-    }
+    .schedule-table tbody tr:nth-child(even) { background: #f0faf6; }
+    .schedule-table tr:last-child td { border-bottom: 0; }
+    .schedule-table td:first-child { color: var(--green); font-weight: bold; }
 
     .schedule-note {
       margin: 13px 0 0;
@@ -561,7 +508,9 @@
     .register-info {
       padding: 28px;
       border-radius: var(--radius);
-      background: var(--green);
+      background:
+        radial-gradient(circle at 100% 0, rgba(53,201,189,.18), transparent 40%),
+        var(--green-dark);
       color: white;
     }
 
@@ -584,16 +533,14 @@
       font-size: 13px;
     }
 
-    .rule-list li {
-      margin-bottom: 10px;
-    }
+    .rule-list li { margin-bottom: 10px; }
 
     .register-form {
       min-width: 0;
       padding: 28px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: var(--white);
+      background: white;
       box-shadow: var(--shadow);
     }
 
@@ -615,13 +562,8 @@
       gap: 17px;
     }
 
-    .field {
-      min-width: 0;
-    }
-
-    .field-full {
-      grid-column: 1 / -1;
-    }
+    .field { min-width: 0; }
+    .field-full { grid-column: 1 / -1; }
 
     .field label {
       display: block;
@@ -631,8 +573,7 @@
       font-weight: bold;
     }
 
-    .field input,
-    .field select {
+    .field input, .field select {
       display: block;
       width: 100%;
       min-width: 0;
@@ -647,23 +588,19 @@
       transition: border-color .2s, box-shadow .2s;
     }
 
-    .field input:focus,
-    .field select:focus {
+    .field input:focus, .field select:focus {
       border-color: var(--green-light);
       box-shadow: 0 0 0 3px rgba(36,89,67,.1);
     }
 
-    .field input::placeholder {
-      color: #9aa39b;
-      font-size: 12px;
-    }
+    .field input::placeholder { color: #9aa39b; font-size: 12px; }
 
     .consent {
-      display: flex;
+      display: flex !important;
       align-items: flex-start;
       gap: 10px;
-      color: var(--muted);
-      font-size: 12px;
+      color: var(--muted) !important;
+      font-size: 12px !important;
       line-height: 1.9;
     }
 
@@ -690,6 +627,7 @@
       padding: 37px 0;
       background: var(--green-dark);
       color: white;
+      border-top: 3px solid var(--gold);
     }
 
     .footer-inner {
@@ -705,11 +643,7 @@
       font-size: 16px;
     }
 
-    .footer p {
-      margin: 0;
-      color: #d7e1d9;
-      font-size: 12px;
-    }
+    .footer p { margin: 0; color: #d7e1d9; font-size: 12px; }
 
     .footer-links {
       display: flex;
@@ -718,63 +652,31 @@
       font-size: 12px;
     }
 
-    .footer-links a:hover {
-      color: var(--gold);
-    }
-
     @media (max-width: 850px) {
-      .nav {
-        min-height: 70px;
-      }
-
-      .nav-links {
-        gap: 13px;
-      }
-
-      .hero {
-        padding: 55px 0;
-      }
+      .nav { min-height: 70px; }
+      .nav-links { gap: 13px; }
+      .hero { padding: 50px 0; }
 
       .hero-grid {
         grid-template-columns: 1fr;
-        gap: 32px;
+        gap: 30px;
       }
 
-      .hero-copy {
-        text-align: center;
-      }
+      .hero-copy { text-align: center; }
+      .hero-description { margin-inline: auto; }
+      .hero-actions { justify-content: center; }
+      .hero-photo { width: min(100%, 560px); margin-inline: auto; }
+      .hero-photo > img { height: 300px; }
 
-      .hero-description {
-        margin-inline: auto;
-      }
-
-      .hero-actions {
-        justify-content: center;
-      }
-
-      .hero-visual {
-        width: min(100%, 560px);
-        margin-inline: auto;
-      }
-
-      .photo-placeholder {
-        min-height: 250px;
-      }
-
-      .values-grid,
-      .courses-grid {
+      .values-grid, .courses-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .register-grid {
-        grid-template-columns: 1fr;
-      }
+      .register-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 560px) {
-      .container {
-        width: calc(100% - 28px);
-      }
+      .container { width: calc(100% - 28px); }
 
       .nav {
         min-height: 65px;
@@ -782,9 +684,7 @@
         padding-block: 10px;
       }
 
-      .brand {
-        gap: 9px;
-      }
+      .brand { gap: 9px; }
 
       .brand-mark {
         flex-basis: 38px;
@@ -794,13 +694,8 @@
         font-size: 20px;
       }
 
-      .brand-name {
-        font-size: 12px;
-      }
-
-      .brand-subtitle {
-        font-size: 10px;
-      }
+      .brand-name { font-size: 12px; }
+      .brand-subtitle { font-size: 10px; }
 
       .nav-links {
         width: 100%;
@@ -811,108 +706,42 @@
         font-size: 11px;
       }
 
-      .nav-links a {
-        padding: 4px 0;
-      }
-
-      .nav-cta {
-        padding: 6px 10px !important;
-      }
-
-      .hero {
-        padding: 42px 0 38px;
-      }
+      .nav-cta { padding: 6px 10px !important; }
+      .hero { padding: 40px 0 35px; }
 
       .hero h1 {
         font-size: 29px;
         line-height: 1.75;
       }
 
-      .hero-description {
-        font-size: 13px;
-        line-height: 2.1;
-      }
+      .hero-description { font-size: 13px; line-height: 2.1; }
+      .hero-actions { flex-direction: column; }
+      .hero-actions .btn { width: 100%; }
+      .hero-photo > img { height: 235px; }
 
-      .hero-actions {
-        flex-direction: column;
-      }
+      .hero-photo-caption { padding: 12px 14px; }
+      .hero-photo-caption strong { font-size: 14px; }
+      .hero-photo-caption p { font-size: 11px; }
 
-      .hero-actions .btn {
-        width: 100%;
-      }
+      .section { padding: 52px 0; }
+      .section-heading { margin-bottom: 26px; }
+      .section-heading h2 { font-size: 25px; }
 
-      .photo-placeholder {
-        min-height: 215px;
-        padding: 22px;
-        border-radius: 22px 22px 22px 6px;
-      }
-
-      .placeholder-symbol {
-        width: 67px;
-        height: 67px;
-        font-size: 32px;
-      }
-
-      .photo-placeholder h2 {
-        font-size: 19px;
-      }
-
-      .photo-placeholder p {
-        font-size: 12px;
-      }
-
-      .section {
-        padding: 52px 0;
-      }
-
-      .section-heading {
-        margin-bottom: 26px;
-      }
-
-      .section-heading h2 {
-        font-size: 25px;
-      }
-
-      .values-grid,
-      .courses-grid {
+      .values-grid, .courses-grid {
         grid-template-columns: 1fr;
         gap: 15px;
       }
 
-      .value-card {
-        padding: 22px;
-      }
+      .value-card { padding: 22px; }
+      .course-art { min-height: 125px; }
+      .course-body { padding: 20px; }
+      .course-body h3 { font-size: 19px; }
 
-      .course-art {
-        min-height: 125px;
-      }
+      .register-info, .register-form { padding: 21px 17px; }
+      .form-grid { grid-template-columns: 1fr; gap: 14px; }
+      .field-full { grid-column: auto; }
 
-      .course-body {
-        padding: 20px;
-      }
-
-      .course-body h3 {
-        font-size: 19px;
-      }
-
-      .register-info,
-      .register-form {
-        padding: 21px 17px;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-
-      .field-full {
-        grid-column: auto;
-      }
-
-      .schedule-table th,
-      .schedule-table td {
-        padding: 14px;
-      }
+      .schedule-table th, .schedule-table td { padding: 14px; }
 
       .footer-inner {
         align-items: flex-start;
@@ -921,9 +750,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
+      *, *::before, *::after {
         scroll-behavior: auto !important;
         transition-duration: .01ms !important;
       }
@@ -970,12 +797,18 @@
           </div>
         </div>
 
-        <div class="hero-visual">
-          <!-- در آینده می‌توان عکس واقعی مسجد را در این بخش قرار داد. -->
-          <div class="photo-placeholder">
-            <div class="placeholder-symbol" aria-hidden="true">✦</div>
-            <h2>از یادگیری تا توانمندی</h2>
-            <p>هر مهارت، فرصتی تازه برای رشد و خدمت</p>
+        <div class="hero-photo">
+          <img
+            src="https://drive.google.com/uc?export=view&id=1OhGMcVktGyhhKel-19-UbB-D6qK1vnkN"
+            alt="مسجد فائق"
+            fetchpriority="high"
+          >
+          <div class="hero-photo-caption">
+            <span aria-hidden="true">✦</span>
+            <div>
+              <strong>از یادگیری تا توانمندی</strong>
+              <p>هر مهارت، فرصتی تازه برای رشد و خدمت</p>
+            </div>
           </div>
         </div>
       </div>
@@ -983,6 +816,14 @@
 
     <section class="section section-white" id="about">
       <div class="container">
+        <div class="about-photo">
+          <img
+            src="https://drive.google.com/uc?export=view&id=1mcdiJ0neYMFxoPxc0Xch5uP_ilCjmCa3"
+            alt="فضای مسجد فائق"
+            loading="lazy"
+          >
+        </div>
+
         <div class="section-heading">
           <p class="section-kicker">درباره پایگاه</p>
           <h2>یادگیری فراتر از کلاس</h2>
@@ -1249,13 +1090,13 @@
     </div>
   </footer>
 
-  <!-- تنظیمات و منطق فعلی سامانه حفظ می‌شوند. -->
+  <!-- فایل‌های سامانه ثبت‌نام حفظ شده‌اند -->
   <script src="config.js"></script>
   <script src="app.js"></script>
 
   <script>
-    // انتخاب کلاس از روی کارت دوره
-    // ارسال فرم همچنان بر عهده app.js فعلی است.
+    // انتخاب خودکار دوره از روی کارت کلاس
+    // ارسال فرم همچنان بر عهده app.js است.
     document.querySelectorAll("[data-course]").forEach(function (link) {
       link.addEventListener("click", function () {
         var courseSelect = document.getElementById("course_id");
