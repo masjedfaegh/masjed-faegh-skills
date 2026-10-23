@@ -247,6 +247,8 @@ async function startRegistrationApp() {
 
     try {
       // مرحله اول: ذخیره ثبت‌نام در Supabase
+      console.log("Registration data:", record);
+console.log("Active courses:", activeCourses);
       const { data: insertedRows, error: insertError } = await client
         .from("registrations")
         .insert([record])
