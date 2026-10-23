@@ -4,16 +4,91 @@ const courseSelect = document.getElementById("course_id");
 const message = document.getElementById("form-message");
 const courseGrid = document.getElementById("course-grid");
 
-function getCourseIcon(title) {
+const APPS_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbxnveLjHuRJN3-X6BBeVn_X26hRUU0K2Ou_-CrX5m8ZjDoy0UX55RjoGwUxrOc5Fl3N/exec";
+
+const MAX_RECEIPT_SIZE = 2 * 1024 * 1024;
+
+function getCourseIcon(title = "") {
   if (title.includes("نئون")) return "💡";
   if (title.includes("فتوشاپ")) return "🎨";
   if (title.includes("مداحی") || title.includes("سرود")) return "🎙️";
   return "📘";
 }
 
+function showMessage(text) {
+  if (message) message.textContent = text;
+}
+
+function formatToman(value) {
+  const amount = Number(value || 0);
+  return amount.toLocaleString("fa-IR") + " تومان";
+}
+
+function getOrCreateReceiptInput() {
+  let input = document.getElementById("receipt_file");
+
+  if (input || !form) return input;
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "form-group";
+
+  const label = document.createElement("label");
+  label.htmlFor = "receipt_file";
+  label.textContent = "تصویر یا PDF فیش واریزی";
+
+  input = document.createElement("input");
+  input.type = "file";
+  input.id = "receipt_file";
+  input.name = "receipt_file";
+  input.accept = "image/jpeg,image/png,application/pdf";
+  input.required = true;
+
+  const help = document.createElement("small");
+  help.textContent = "فرمت مجاز JPG، PNG یا PDF؛ حداکثر ۲ مگابایت.";
+
+  wrapper.append(label, input, help);
+
+  const consent = document.getElementById("guardian_consent");
+  const consentWrapper = consent?.closest(".form-group") || consent?.parentElement;
+
+  if (consentWrapper && consentWrapper.parentElement === form) {
+    form.insertBefore(wrapper, consentWrapper);
+  } else {
+    form.appendChild(wrapper);
+  }
+
+  return input;
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const commaIndex = result.indexOf(",");
+
+      if (commaIndex < 0) {
+        reject(new Error("خواندن فایل فیش ناموفق بود."));
+        return;
+      }
+
+      resolve(result.slice(commaIndex + 1));
+    };
+
+    reader.onerror = () => reject(new Error("خواندن فایل فیش ناموفق بود."));
+    reader.readAsDataURL(file);
+  });
+}
+
 async function startRegistrationApp() {
-  if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
-    if (message) message.textContent = "اتصال سامانه هنوز تنظیم نشده است.";
+  if (
+    !window.supabase ||
+    !window.SUPABASE_URL ||
+    !window.SUPABASE_ANON_KEY
+  ) {
+    showMessage("اتصال سامانه تنظیم نشده است. لطفاً بعداً تلاش کنید.");
     return;
   }
 
@@ -24,13 +99,13 @@ async function startRegistrationApp() {
 
   const { data: courses, error } = await client
     .from("courses")
-    .select("id, title, description")
+    .select("id, title, description, price_toman")
     .eq("is_active", true)
     .order("title");
 
   if (error) {
-    console.error(error);
-    if (message) message.textContent = "دریافت کلاس‌ها ناموفق بود.";
+    console.error("Course loading error:", error);
+    showMessage("دریافت کلاس‌ها ناموفق بود.");
     return;
   }
 
@@ -49,7 +124,8 @@ async function startRegistrationApp() {
     for (const course of activeCourses) {
       const option = document.createElement("option");
       option.value = String(course.id);
-      option.textContent = course.title;
+      option.textContent =
+        `${course.title} — ${formatToman(course.price_toman)}`;
       courseSelect.appendChild(option);
     }
   }
@@ -64,7 +140,7 @@ async function startRegistrationApp() {
       const icon = document.createElement("div");
       icon.className = "course-icon";
       icon.setAttribute("aria-hidden", "true");
-      icon.textContent = getCourseIcon(course.title || "");
+      icon.textContent = getCourseIcon(course.title);
 
       const heading = document.createElement("h3");
       heading.textContent = course.title || "کلاس آموزشی";
@@ -72,6 +148,10 @@ async function startRegistrationApp() {
       const description = document.createElement("p");
       description.textContent =
         course.description || "توضیحات این کلاس به‌زودی اضافه می‌شود.";
+
+      const price = document.createElement("p");
+      price.className = "course-price";
+      price.textContent = "هزینه: " + formatToman(course.price_toman);
 
       const link = document.createElement("a");
       link.className = "btn";
@@ -82,12 +162,14 @@ async function startRegistrationApp() {
         if (courseSelect) courseSelect.value = String(course.id);
       });
 
-      card.append(icon, heading, description, link);
+      card.append(icon, heading, description, price, link);
       courseGrid.appendChild(card);
     }
   }
 
   if (!form || !courseSelect || !message) return;
+
+  const receiptInput = getOrCreateReceiptInput();
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -96,14 +178,47 @@ async function startRegistrationApp() {
 
     const consent = document.getElementById("guardian_consent");
 
-    if (!consent || !consent.checked) {
-      message.textContent = "رضایت ولی یا سرپرست الزامی است.";
+    if (!consent?.checked) {
+      showMessage("رضایت ولی یا سرپرست الزامی است.");
       return;
     }
 
     if (!courseSelect.value) {
-      message.textContent = "لطفاً یک کلاس انتخاب کنید.";
+      showMessage("لطفاً یک کلاس انتخاب کنید.");
       courseSelect.focus();
+      return;
+    }
+
+    const file = receiptInput?.files?.[0];
+
+    if (!file) {
+      showMessage("لطفاً فیش واریزی را انتخاب کنید.");
+      receiptInput?.focus();
+      return;
+    }
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "application/pdf"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      showMessage("فیش باید JPG، PNG یا PDF باشد.");
+      return;
+    }
+
+    if (file.size > MAX_RECEIPT_SIZE) {
+      showMessage("حجم فیش نباید بیشتر از ۲ مگابایت باشد.");
+      return;
+    }
+
+    const selectedCourse = activeCourses.find(
+      (course) => String(course.id) === courseSelect.value
+    );
+
+    if (!selectedCourse) {
+      showMessage("کلاس انتخاب‌شده معتبر نیست؛ صفحه را تازه‌سازی کنید.");
       return;
     }
 
@@ -116,43 +231,82 @@ async function startRegistrationApp() {
       guardian_consent: true
     };
 
-    message.textContent = "در حال ارسال درخواست...";
-
-    const { error: insertError } = await client
-      .from("registrations")
-      .insert([record]);
-
-    if (insertError) {
-      console.error("Registration error:", insertError);
-      message.textContent =
-        "ثبت‌نام انجام نشد. تنظیمات پایگاه داده نیاز به بررسی دارد.";
+    if (
+      !record.student_name ||
+      !record.grade ||
+      !record.phone ||
+      !record.guardian_name
+    ) {
+      showMessage("لطفاً تمام اطلاعات ضروری را تکمیل کنید.");
       return;
     }
 
-const courseTitle =
-  courseSelect.options[courseSelect.selectedIndex].textContent;
+    const submitButton = form.querySelector('[type="submit"]');
 
-try {
-  await fetch(
-    "https://script.google.com/macros/s/AKfycbxnveLjHuRJN3-X6BBeVn_X26hRUU0K2Ou_-CrX5m8ZjDoy0UX55RjoGwUxrOc5Fl3N/exec",
-    {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify({
-        ...record,
-        course_title: courseTitle
-      })
+    if (submitButton) submitButton.disabled = true;
+    showMessage("در حال ثبت اطلاعات؛ لطفاً صفحه را نبندید...");
+
+    try {
+      // مرحله اول: ذخیره ثبت‌نام در Supabase
+      const { data: insertedRows, error: insertError } = await client
+        .from("registrations")
+        .insert([record])
+        .select("id")
+        .limit(1);
+
+      if (insertError) {
+        console.error("Registration error:", insertError);
+        showMessage(
+          "ثبت‌نام در سامانه انجام نشد. لطفاً بعداً تلاش کنید."
+        );
+        return;
+      }
+
+      const registrationId = insertedRows?.[0]?.id;
+
+      if (!registrationId) {
+        showMessage(
+          "ثبت‌نام ذخیره شد، اما شناسه آن دریافت نشد. برای جلوگیری از ثبت تکراری، دوباره ارسال نکنید."
+        );
+        return;
+      }
+
+      showMessage("ثبت‌نام ذخیره شد؛ در حال ارسال فیش...");
+
+      const receiptBase64 = await fileToBase64(file);
+
+      // مرحله دوم: ارسال اطلاعات و فیش به Google Apps Script
+      // no-cors پاسخ قابل‌خواندن نمی‌دهد؛ ذخیره موفق فایل از اینجا
+      // قابل تأیید نیست و باید در Google Drive و Sheets بررسی شود.
+      await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({
+          ...record,
+          course_title: selectedCourse.title,
+          registration_id: String(registrationId),
+          receipt_name: file.name,
+          receipt_mime_type: file.type,
+          receipt_base64: receiptBase64
+        })
+      });
+
+      form.reset();
+
+      showMessage(
+        "ثبت‌نام در سامانه ذخیره شد. ارسال فیش انجام شد، اما تأیید ذخیره آن هنوز لازم است. وضعیت پرداخت پس از بررسی مسئول مربوط مشخص می‌شود."
+      );
+    } catch (error) {
+      console.error("Submission error:", error);
+      showMessage(
+        "در ارسال اطلاعات یا فیش مشکلی پیش آمد. ممکن است ثبت‌نام قبلاً ذخیره شده باشد؛ قبل از ارسال مجدد، ثبت‌نام را بررسی کنید."
+      );
+    } finally {
+      if (submitButton) submitButton.disabled = false;
     }
-  );
-} catch (sheetError) {
-  console.error("Google Sheets sync error:", sheetError);
-}
-
-    form.reset();
-    message.textContent = "درخواست ثبت‌نام با موفقیت ارسال شد.";
   });
 }
 
