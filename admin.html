@@ -1,0 +1,230 @@
+```html
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پنل مدیریت | پایگاه مهارت‌آموزی مسجد فائق</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #f3f6fb;
+      color: #172033;
+      line-height: 1.8;
+    }
+    header {
+      background: #123c32;
+      color: white;
+      padding: 22px 16px;
+      text-align: center;
+    }
+    main {
+      width: min(1100px, 94%);
+      margin: 28px auto;
+    }
+    .panel {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 5px 22px #17203310;
+    }
+    h1, h2 { margin-top: 0; }
+    label { display: block; margin: 12px 0 5px; }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccd5df;
+      border-radius: 9px;
+      font: inherit;
+    }
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 18px;
+      margin-top: 15px;
+      background: #176b50;
+      color: white;
+      font: inherit;
+      cursor: pointer;
+    }
+    button.secondary { background: #475569; }
+    button:disabled { opacity: .6; cursor: wait; }
+    #message { margin-top: 12px; }
+    .hidden { display: none; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 650px; }
+    th, td {
+      text-align: right;
+      padding: 11px;
+      border-bottom: 1px solid #e5eaf0;
+    }
+    th { background: #eef4f1; }
+    .muted { color: #64748b; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>پنل مدیریت مسجد فائق</h1>
+    <div>مدیریت ثبت‌نام کلاس‌های مهارتی نوجوانان</div>
+  </header>
+
+  <main>
+    <section id="login-panel" class="panel">
+      <h2>ورود مدیر سامانه</h2>
+      <p class="muted">با حساب کاربری ثبت‌شده در سامانه وارد شوید.</p>
+
+      <form id="login-form">
+        <label for="email">ایمیل</label>
+        <input id="email" type="email" autocomplete="username" required>
+
+        <label for="password">رمز عبور</label>
+        <input id="password" type="password"
+               autocomplete="current-password" required>
+
+        <button id="login-button" type="submit">ورود به پنل</button>
+      </form>
+      <p id="login-message" role="status"></p>
+    </section>
+
+    <section id="dashboard" class="panel hidden">
+      <h2>ثبت‌نام‌های کلاس‌ها</h2>
+      <p id="admin-info" class="muted"></p>
+      <button id="refresh-button" type="button">به‌روزرسانی فهرست</button>
+      <button id="logout-button" class="secondary" type="button">خروج</button>
+      <p id="data-message" role="status"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>نام دانش‌آموز</th>
+              <th>پایه</th>
+              <th>شماره تماس</th>
+              <th>نام ولی</th>
+              <th>شناسه کلاس</th>
+              <th>تاریخ ثبت</th>
+            </tr>
+          </thead>
+          <tbody id="registration-rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./config.js"></script>
+  <script>
+    const loginPanel = document.getElementById("login-panel");
+    const dashboard = document.getElementById("dashboard");
+    const loginForm = document.getElementById("login-form");
+    const loginMessage = document.getElementById("login-message");
+    const dataMessage = document.getElementById("data-message");
+    const rows = document.getElementById("registration-rows");
+
+    let client = null;
+
+    function showMessage(element, text) {
+      element.textContent = text;
+    }
+
+    function showDashboard(isAdmin) {
+      loginPanel.classList.toggle("hidden", isAdmin);
+      dashboard.classList.toggle("hidden", !isAdmin);
+    }
+
+    async function checkAdmin() {
+      const { data: { user }, error: userError } =
+        await client.auth.getUser();
+
+      if (userError || !user) {
+        showDashboard(false);
+        return false;
+      }
+
+      const { data: profile, error } = await client
+        .from("education_profiles")
+        .select("full_name, role")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        showDashboard(false);
+        showMessage(
+          loginMessage,
+          "بررسی دسترسی مدیر ناموفق بود. تنظیمات دسترسی پایگاه داده باید بررسی شود."
+        );
+        console.error(error);
+        return false;
+      }
+
+      if (!profile || profile.role !== "admin") {
+        showDashboard(false);
+        showMessage(
+          loginMessage,
+          "این حساب دسترسی مدیر ندارد."
+        );
+        await client.auth.signOut();
+        return false;
+      }
+
+      showDashboard(true);
+      showMessage(
+        document.getElementById("admin-info"),
+        "مدیر: " + (profile.full_name || user.email || "")
+      );
+
+      await loadRegistrations();
+      return true;
+    }
+
+    async function loadRegistrations() {
+      rows.replaceChildren();
+      showMessage(dataMessage, "در حال دریافت اطلاعات...");
+
+      const { data, error } = await client
+        .from("registrations")
+        .select("student_name, grade, phone, guardian_name, course_id, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        showMessage(
+          dataMessage,
+          "دریافت ثبت‌نام‌ها ناموفق بود. سیاست‌های دسترسی جدول را بررسی کنید."
+        );
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        showMessage(dataMessage, "هنوز ثبت‌نامی وجود ندارد.");
+        return;
+      }
+
+      for (const item of data) {
+        const tr = document.createElement("tr");
+        const values = [
+          item.student_name,
+          item.grade,
+          item.phone,
+          item.guardian_name,
+          item.course_id,
+          item.created_at
+            ? new Date(item.created_at).toLocaleString("fa-IR")
+            : "—"
+        ];
+
+        for (const value of values) {
+          const td = document.createElement("td");
+          td.textContent = value == null ? "—" : String(value);
+          tr.appendChild(td);
+        }
+
+        rows.appendChild(tr);
+      }
+
+      showMessage(dataMessage, "تعداد ثبت‌نام‌ها: " + data.length);
+    }
+
