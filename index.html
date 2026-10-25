@@ -1,407 +1,1113 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#103b32">
+  <meta name="description" content="پایگاه مهارت‌آموزی نوجوانان مسجد فائق">
+  <title>پایگاه مهارت‌آموزی نوجوانان مسجد فائق</title>
 
-"use strict";
+  <style>
+    :root {
+      --green: #146b50;
+      --dark: #103b32;
+      --light: #23866b;
+      --cream: #fff9ed;
+      --white: #fff;
+      --gold: #ffd166;
+      --turquoise: #35c9bd;
+      --text: #263a35;
+      --muted: #687c76;
+      --border: #e4e9df;
+      --shadow: 0 16px 42px rgba(16,59,50,.09);
+      --radius: 22px;
+    }
 
-/* تنظیمات اصلی */
-const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxnveLjHuRJN3-X6BBeVn_X26hRUU0K2Ou_-CrX5m8ZjDoy0UX55RjoGwUxrOc5Fl3N/exec";
+    * { box-sizing: border-box; }
 
-const MAX_RECEIPT_SIZE = 2 * 1024 * 1024;
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 95px;
+    }
 
-const ALLOWED_FILE_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "application/pdf"
-];
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--text);
+      font-family: Tahoma, Arial, sans-serif;
+      line-height: 1.9;
+      overflow-wrap: anywhere;
+    }
 
-const COURSE_PRICES = {
-  "نئون فلکسی": 2000000,
-  "فتوشاپ": 1500000,
-  "سواد رسانه": 1500000,
-  "خوشنویسی": 1500000
-};
+    img { max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
 
-const COURSE_ORDER = [
-  "نئون فلکسی",
-  "فتوشاپ",
-  "سواد رسانه",
-  "خوشنویسی"
-];
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin-inline: auto;
+    }
 
-const form = document.getElementById("registration-form");
-const courseSelect = document.getElementById("course_id");
-const message = document.getElementById("form-message");
-const courseGrid = document.getElementById("course-grid");
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(16,59,50,.97);
+      color: white;
+      border-bottom: 2px solid rgba(255,209,102,.65);
+      backdrop-filter: blur(12px);
+    }
 
-let activeCourses = [];
-let isSubmitting = false;
-let supabaseClient = null;
+    .nav {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+    }
 
-function showMessage(text) {
-  if (message) message.textContent = text;
-}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
 
-function formatToman(value) {
-  return Number(value || 0).toLocaleString("fa-IR") + " تومان";
-}
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      flex: 0 0 44px;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--gold);
+      border-radius: 14px 14px 14px 4px;
+      color: var(--gold);
+      font-size: 23px;
+    }
 
-function getCourseIcon(title) {
-  const icons = {
-    "نئون فلکسی": "💡",
-    "فتوشاپ": "🎨",
-    "سواد رسانه": "📱",
-    "خوشنویسی": "✍️"
-  };
+    .brand-name {
+      font-size: 14px;
+      font-weight: bold;
+      line-height: 1.8;
+    }
 
-  return icons[title] || "📘";
-}
+    .brand-subtitle {
+      display: block;
+      color: #d9e9e0;
+      font-size: 11px;
+      font-weight: normal;
+    }
 
-function getCourseDescription(course) {
-  if (course.description) return course.description;
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 13px;
+    }
 
-  const descriptions = {
-    "نئون فلکسی":
-      "آموزش طراحی و اجرای نئون فلکسی و ساخت محصولات نورانی و خلاقانه.",
-    "فتوشاپ":
-      "آموزش ابزارهای فتوشاپ، ویرایش تصاویر و طراحی گرافیکی.",
-    "سواد رسانه":
-      "شناخت پیام‌های رسانه‌ای، تشخیص اخبار جعلی و استفاده آگاهانه از فضای مجازی.",
-    "خوشنویسی":
-      "آشنایی با اصول خوشنویسی، تمرین حروف و کلمات و زیبایی در نگارش."
-  };
+    .nav-links a { color: #f1f7f3; }
+    .nav-links a:hover, .footer-links a:hover { color: var(--gold); }
 
-  return descriptions[course.title] || "دوره مهارت‌آموزی مسجد فائق.";
-}
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 16px;
+      border-radius: 12px;
+      background: var(--gold);
+      color: var(--dark) !important;
+      font-weight: bold;
+    }
 
-/* دریافت یا ساخت ورودی فیش */
-function getOrCreateReceiptInput() {
-  let input = document.getElementById("receipt_file");
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 70px 0 65px;
+      background:
+        radial-gradient(ellipse at 10% 10%, rgba(53,201,189,.2), transparent 32%),
+        radial-gradient(ellipse at 90% 90%, rgba(255,209,102,.13), transparent 35%),
+        linear-gradient(135deg, #103b32, #146b50);
+      color: white;
+    }
 
-  if (input || !form) return input;
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      align-items: center;
+      gap: 44px;
+    }
 
-  const wrapper = document.createElement("div");
-  wrapper.className = "form-group";
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 18px;
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: bold;
+    }
 
-  const label = document.createElement("label");
-  label.htmlFor = "receipt_file";
-  label.textContent = "تصویر یا PDF فیش واریزی";
+    .eyebrow:before {
+      content: "";
+      width: 24px;
+      height: 2px;
+      background: var(--turquoise);
+    }
 
-  input = document.createElement("input");
-  input.type = "file";
-  input.id = "receipt_file";
-  input.name = "receipt_file";
-  input.accept = ALLOWED_FILE_TYPES.join(",");
-  input.required = true;
+    .hero h1 {
+      margin: 0;
+      max-width: 670px;
+      font-size: clamp(29px, 4.2vw, 48px);
+      line-height: 1.65;
+      letter-spacing: -.7px;
+    }
 
-  const help = document.createElement("small");
-  help.textContent = "فرمت JPG، PNG یا PDF؛ حداکثر ۲ مگابایت.";
+    .hero h1 span { color: var(--gold); }
 
-  wrapper.append(label, input, help);
+    .hero-description {
+      max-width: 560px;
+      margin: 20px 0 28px;
+      color: #e0eee6;
+      font-size: 15px;
+      line-height: 2.2;
+    }
 
-  const consent = document.getElementById("guardian_consent");
-  const consentWrapper =
-    consent?.closest(".form-group") || consent?.parentElement;
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
 
-  if (consentWrapper && form.contains(consentWrapper)) {
-    consentWrapper.before(wrapper);
-  } else {
-    form.appendChild(wrapper);
-  }
+    .btn {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border: 1px solid transparent;
+      border-radius: 13px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform .2s, background .2s;
+    }
 
-  return input;
-}
+    .btn:hover { transform: translateY(-2px); }
+    .btn-gold { background: var(--gold); color: var(--dark); }
+    .btn-outline { border-color: rgba(255,255,255,.45); color: white; }
+    .btn-green { background: var(--green); color: white; }
+    .btn-green:hover { background: var(--dark); }
 
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+    .hero-photo {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border: 3px solid rgba(255,209,102,.8);
+      border-radius: 30px 30px 30px 8px;
+      background: #dff3ff;
+      box-shadow: 0 25px 60px rgba(0,0,0,.2);
+    }
 
-    reader.onload = () => {
-      const result = String(reader.result || "");
-      const commaIndex = result.indexOf(",");
+    .hero-photo > img {
+      display: block;
+      width: 100%;
+      height: 330px;
+      object-fit: cover;
+    }
 
-      if (commaIndex < 0) {
-        reject(new Error("خواندن فیش ناموفق بود."));
-        return;
+    .hero-photo-caption {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 20px;
+      background: linear-gradient(100deg, #103b32, #146b50);
+      color: white;
+    }
+
+    .hero-photo-caption > span {
+      color: var(--gold);
+      font-size: 30px;
+    }
+
+    .hero-photo-caption strong {
+      color: var(--gold);
+      font-size: 16px;
+    }
+
+    .hero-photo-caption p {
+      margin: 3px 0 0;
+      color: #e5f5ee;
+      font-size: 12px;
+    }
+
+    .section { padding: 72px 0; }
+    .section-white { background: white; }
+
+    .section-heading {
+      max-width: 720px;
+      margin: 0 auto 34px;
+      text-align: center;
+    }
+
+    .section-kicker {
+      margin: 0 0 8px;
+      color: #a76f0c;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 12px;
+      color: var(--green);
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.7;
+    }
+
+    .section-heading > p:last-child {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .about-photo {
+      margin-bottom: 34px;
+      overflow: hidden;
+      border: 3px solid white;
+      border-radius: 26px;
+      background: #dff3ff;
+      box-shadow: var(--shadow);
+    }
+
+    .about-photo img {
+      display: block;
+      width: 100%;
+      max-height: 340px;
+      object-fit: cover;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 20px;
+    }
+
+    .value-card {
+      padding: 25px 22px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: white;
+      box-shadow: 0 8px 25px rgba(18,60,45,.035);
+    }
+
+    .value-icon {
+      display: grid;
+      place-items: center;
+      width: 49px;
+      height: 49px;
+      margin-bottom: 15px;
+      border-radius: 15px;
+      color: var(--green);
+      font-size: 23px;
+      background: #dff3ff;
+    }
+
+    .value-card:nth-child(2) .value-icon { background: #d8f7ed; }
+    .value-card:nth-child(3) .value-icon { background: #ffe4e8; }
+
+    .value-card h3 {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 17px;
+    }
+
+    .value-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 2.1;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 18px;
+    }
+
+    .course-card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: white;
+      box-shadow: var(--shadow);
+      transition: transform .2s;
+    }
+
+    .course-card:hover { transform: translateY(-4px); }
+
+    .course-art {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 135px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #dff3ff, #b8e3ff);
+    }
+
+    .course-card:nth-child(2) .course-art {
+      background: linear-gradient(135deg, #d8f7ed, #a6e8d7);
+    }
+
+    .course-card:nth-child(3) .course-art {
+      background: linear-gradient(135deg, #fff0b8, #ffdb8b);
+    }
+
+    .course-card:nth-child(4) .course-art {
+      background: linear-gradient(135deg, #ffe4e8, #ffc3d0);
+    }
+
+    .course-icon {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 70px;
+      height: 70px;
+      border-radius: 22px 22px 22px 6px;
+      background: var(--green);
+      color: var(--gold);
+      font-size: 31px;
+      box-shadow: 0 12px 25px rgba(18,60,45,.15);
+    }
+
+    .course-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 20px;
+    }
+
+    .course-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: #fff0c9;
+      color: #785d28;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .course-body h3 {
+      margin: 12px 0 6px;
+      color: var(--green);
+      font-size: 19px;
+    }
+
+    .course-body p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 2;
+    }
+
+    .course-body .course-price {
+      font-weight: bold;
+      color: var(--green);
+    }
+
+    .course-body .btn {
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      margin: 16px 0 0;
+    }
+
+    .schedule-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .group-card {
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: white;
+      box-shadow: 0 8px 25px rgba(18,60,45,.035);
+    }
+
+    .group-card h3 {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 18px;
+    }
+
+    .group-card p {
+      margin: 4px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .group-card strong { color: var(--text); }
+
+    .schedule-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: white;
+      box-shadow: var(--shadow);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .schedule-table {
+      width: 100%;
+      min-width: 520px;
+      border-collapse: collapse;
+      text-align: right;
+    }
+
+    .schedule-table th,
+    .schedule-table td {
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .schedule-table th {
+      background: var(--green);
+      color: white;
+      font-weight: bold;
+    }
+
+    .schedule-table tbody tr:nth-child(even) { background: #f0faf6; }
+    .schedule-table tr:last-child td { border-bottom: 0; }
+
+    .schedule-table td:first-child {
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    .schedule-note {
+      margin: 13px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .register-grid {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      align-items: start;
+      gap: 28px;
+    }
+
+    .register-info {
+      padding: 28px;
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 100% 0, rgba(53,201,189,.18), transparent 40%),
+        var(--dark);
+      color: white;
+    }
+
+    .register-info h3 {
+      margin: 0 0 12px;
+      color: var(--gold);
+      font-size: 22px;
+    }
+
+    .register-info > p {
+      margin: 0 0 20px;
+      color: #e0e9e2;
+      font-size: 13px;
+    }
+
+    .rule-list {
+      margin: 0;
+      padding-right: 20px;
+      color: #eef2ed;
+      font-size: 13px;
+    }
+
+    .rule-list li { margin-bottom: 10px; }
+
+    .register-form {
+      min-width: 0;
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .register-form h3 {
+      margin: 0 0 5px;
+      color: var(--green);
+      font-size: 22px;
+    }
+
+    .form-intro {
+      margin: 0 0 23px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 17px;
+    }
+
+    .field { min-width: 0; }
+    .field-full { grid-column: 1 / -1; }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .field input,
+    .field select {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      min-height: 47px;
+      padding: 10px 12px;
+      border: 1px solid #d9ded4;
+      border-radius: 11px;
+      outline: none;
+      background: #fff;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--light);
+      box-shadow: 0 0 0 3px rgba(36,89,67,.1);
+    }
+
+    .field input[type="file"] {
+      padding: 8px;
+      font-size: 12px;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .consent {
+      display: flex !important;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--muted) !important;
+      font-size: 12px !important;
+      line-height: 1.9;
+    }
+
+    .consent input {
+      flex: 0 0 auto;
+      width: 17px;
+      height: 17px;
+      margin-top: 5px;
+      accent-color: var(--green);
+    }
+
+    .form-submit {
+      width: 100%;
+      margin-top: 20px;
+      border: 0;
+    }
+
+    .form-message {
+      margin-top: 15px;
+      font-size: 13px;
+      white-space: pre-line;
+    }
+
+    .form-message[data-kind="error"] { color: #b42318; }
+    .form-message[data-kind="success"] { color: #146b50; }
+    .form-message[data-kind="info"] { color: #785d28; }
+
+    .footer {
+      padding: 35px 0;
+      background: var(--dark);
+      color: white;
+      border-top: 3px solid var(--gold);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer-title {
+      margin: 0 0 5px;
+      color: var(--gold);
+      font-size: 16px;
+    }
+
+    .footer p {
+      margin: 0;
+      color: #d7e1d9;
+      font-size: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 17px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 1000px) {
+      .courses-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .hero-grid { gap: 28px; }
+      .hero-photo > img { height: 290px; }
+    }
+
+    @media (max-width: 850px) {
+      .nav { min-height: 70px; }
+      .nav-links { gap: 13px; }
+      .hero { padding: 50px 0; }
+      .hero-grid { grid-template-columns: 1fr; gap: 30px; }
+      .hero-copy { text-align: center; }
+      .hero-description { margin-inline: auto; }
+      .hero-actions { justify-content: center; }
+      .hero-photo { width: min(100%,560px); margin-inline: auto; }
+      .hero-photo > img { height: 300px; }
+      .values-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .register-grid { grid-template-columns: 1fr; }
+      .schedule-cards { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .container { width: calc(100% - 28px); }
+      .nav { min-height: 65px; flex-wrap: wrap; padding-block: 10px; }
+      .brand { gap: 9px; }
+      .brand-mark { flex-basis: 38px; width: 38px; height: 38px; font-size: 20px; }
+      .brand-name { font-size: 12px; }
+      .brand-subtitle { font-size: 10px; }
+      .nav-links {
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+        padding-top: 6px;
+        border-top: 1px solid rgba(255,255,255,.1);
+        font-size: 11px;
       }
-
-      resolve(result.slice(commaIndex + 1));
-    };
-
-    reader.onerror = () => reject(new Error("خواندن فیش ناموفق بود."));
-    reader.readAsDataURL(file);
-  });
-}
-
-/* نمایش کلاس‌ها و قیمت‌ها */
-function renderCourses() {
-  if (courseSelect) {
-    courseSelect.replaceChildren();
-
-    const placeholder = document.createElement("option");
-    placeholder.value = "";
-    placeholder.textContent = "کلاس موردنظر را انتخاب کنید";
-    placeholder.disabled = true;
-    placeholder.selected = true;
-    courseSelect.appendChild(placeholder);
-
-    for (const course of activeCourses) {
-      const option = document.createElement("option");
-      option.value = String(course.id);
-      option.textContent =
-        `${course.title} — ${formatToman(COURSE_PRICES[course.title])}`;
-
-      courseSelect.appendChild(option);
+      .nav-cta { padding: 6px 10px; }
+      .hero { padding: 40px 0 35px; }
+      .hero h1 { font-size: 29px; line-height: 1.75; }
+      .hero-description { font-size: 13px; line-height: 2.1; }
+      .hero-actions { flex-direction: column; }
+      .hero-actions .btn { width: 100%; }
+      .hero-photo > img { height: 235px; }
+      .hero-photo-caption { padding: 12px 14px; }
+      .hero-photo-caption strong { font-size: 14px; }
+      .hero-photo-caption p { font-size: 11px; }
+      .section { padding: 52px 0; }
+      .section-heading { margin-bottom: 26px; }
+      .section-heading h2 { font-size: 25px; }
+      .values-grid, .courses-grid, .schedule-cards { grid-template-columns: 1fr; gap: 15px; }
+      .value-card { padding: 22px; }
+      .course-art { min-height: 120px; }
+      .course-body { padding: 20px; }
+      .register-info, .register-form { padding: 21px 17px; }
+      .form-grid { grid-template-columns: 1fr; gap: 14px; }
+      .field-full { grid-column: auto; }
+      .schedule-table th, .schedule-table td { padding: 13px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
     }
-  }
 
-  if (!courseGrid) return;
-
-  courseGrid.replaceChildren();
-
-  for (const course of activeCourses) {
-    const card = document.createElement("article");
-    card.className = "course-card";
-
-    const icon = document.createElement("div");
-    icon.className = "course-icon";
-    icon.setAttribute("aria-hidden", "true");
-    icon.textContent = getCourseIcon(course.title);
-
-    const heading = document.createElement("h3");
-    heading.textContent = course.title;
-
-    const description = document.createElement("p");
-    description.textContent = getCourseDescription(course);
-
-    const price = document.createElement("p");
-    price.className = "course-price";
-    price.textContent =
-      "هزینه: " + formatToman(COURSE_PRICES[course.title]);
-
-    const link = document.createElement("a");
-    link.className = "btn";
-    link.href = "#register";
-    link.textContent = "ثبت‌نام در این کلاس";
-
-    link.addEventListener("click", () => {
-      if (courseSelect) {
-        courseSelect.value = String(course.id);
-      }
-    });
-
-    card.append(icon, heading, description, price, link);
-    courseGrid.appendChild(card);
-  }
-}
-
-/* راه‌اندازی سایت */
-async function startRegistrationApp() {
-  if (!form || !courseSelect || !message) {
-    console.error("فرم ثبت‌نام یا اجزای ضروری پیدا نشد.");
-    return;
-  }
-
-  if (
-    !window.supabase ||
-    !window.SUPABASE_URL ||
-    !window.SUPABASE_ANON_KEY
-  ) {
-    showMessage("اتصال Supabase تنظیم نشده است.");
-    return;
-  }
-
-  supabaseClient = window.supabase.createClient(
-    window.SUPABASE_URL,
-    window.SUPABASE_ANON_KEY
-  );
-
-  try {
-    const { data, error } = await supabaseClient
-      .from("courses")
-      .select("id, title, description, price_toman, is_active")
-      .eq("is_active", true);
-
-    if (error) throw error;
-
-    const coursesByTitle = new Map();
-
-    for (const course of data || []) {
-      const title = String(course.title || "").trim();
-
-      if (
-        Object.prototype.hasOwnProperty.call(COURSE_PRICES, title) &&
-        !coursesByTitle.has(title)
-      ) {
-        coursesByTitle.set(title, {
-          ...course,
-          title,
-          price_toman: COURSE_PRICES[title]
-        });
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
       }
     }
+  </style>
+</head>
 
-    activeCourses = COURSE_ORDER
-      .filter(title => coursesByTitle.has(title))
-      .map(title => coursesByTitle.get(title));
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#home" aria-label="صفحه اصلی مسجد فائق">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span class="brand-name">
+          پایگاه مهارت‌آموزی نوجوانان مسجد فائق
+          <span class="brand-subtitle">یادگیری، رشد، مهارت و خدمت</span>
+        </span>
+      </a>
 
-    renderCourses();
+      <nav class="nav-links" aria-label="منوی اصلی">
+        <a href="#about">معرفی</a>
+        <a href="#courses">کلاس‌ها</a>
+        <a href="#groups">گروه‌ها</a>
+        <a href="#schedule">برنامه</a>
+        <a class="nav-cta" href="#register">ثبت‌نام</a>
+      </nav>
+    </div>
+  </header>
 
-    const missingCourses = COURSE_ORDER.filter(
-      title => !coursesByTitle.has(title)
-    );
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">پایگاه مهارت‌آموزی نوجوانان مسجد فائق</p>
+          <h1>مهارت یاد بگیر؛<br><span>آینده‌ات را بساز.</span></h1>
+          <p class="hero-description">
+            فرصتی برای کشف استعدادها، یادگیری مهارت‌های کاربردی، تجربه کار گروهی
+            و آماده‌شدن برای نقش‌آفرینی مؤثر در جامعه.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-gold" href="#courses">مشاهده کلاس‌ها ←</a>
+            <a class="btn btn-outline" href="#register">ثبت‌نام در دوره‌ها</a>
+          </div>
+        </div>
 
-    if (missingCourses.length > 0) {
-      showMessage(
-        "این کلاس‌ها در جدول courses فعال نیستند: " +
-        missingCourses.join("، ")
-      );
-    } else {
-      showMessage("کلاس‌ها با موفقیت بارگذاری شدند.");
-    }
+        <div class="hero-photo">
+          <img
+            src="https://drive.google.com/thumbnail?id=1OhGMcVktGyhhKel-19-UbB-D6qK1vnkN&sz=w1200"
+            alt="مسجد فائق"
+            fetchpriority="high"
+          >
+          <div class="hero-photo-caption">
+            <span aria-hidden="true">✦</span>
+            <div>
+              <strong>از یادگیری تا توانمندی</strong>
+              <p>هر مهارت، فرصتی تازه برای رشد و خدمت</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  } catch (error) {
-    console.error("خطای دریافت کلاس‌ها:", error);
-    showMessage(
-      "دریافت کلاس‌ها ناموفق بود. اتصال و دسترسی جدول courses را بررسی کنید."
-    );
-    return;
-  }
+    <section class="section section-white" id="about">
+      <div class="container">
+        <div class="about-photo">
+          <img
+            src="https://drive.google.com/thumbnail?id=1mcdiJ0neYMFxoPxc0Xch5uP_ilCjmCa3&sz=w1200"
+            alt="فضای مسجد فائق"
+            loading="lazy"
+          >
+        </div>
 
-  const receiptInput = getOrCreateReceiptInput();
-  const submitButton = form.querySelector('[type="submit"]');
+        <div class="section-heading">
+          <p class="section-kicker">درباره پایگاه</p>
+          <h2>یادگیری فراتر از کلاس</h2>
+          <p>محیطی برای رشد استعدادها و تبدیل آموخته‌ها به توانایی‌های واقعی و کاربردی.</p>
+        </div>
 
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
+        <div class="values-grid">
+          <article class="value-card">
+            <div class="value-icon" aria-hidden="true">✧</div>
+            <h3>کشف استعداد</h3>
+            <p>فرصتی برای شناخت علاقه‌ها و پیدا کردن مسیر رشد و یادگیری.</p>
+          </article>
 
-    if (isSubmitting) return;
-    if (!form.reportValidity()) return;
+          <article class="value-card">
+            <div class="value-icon" aria-hidden="true">◇</div>
+            <h3>یادگیری عملی</h3>
+            <p>تمرین و تجربه برای تبدیل دانش به مهارت‌های قابل استفاده.</p>
+          </article>
 
-    const consent = document.getElementById("guardian_consent");
+          <article class="value-card">
+            <div class="value-icon" aria-hidden="true">✦</div>
+            <h3>رشد جمعی</h3>
+            <p>تقویت مسئولیت‌پذیری، همکاری و استفاده از توانایی‌ها برای خدمت.</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-    if (!consent?.checked) {
-      showMessage("رضایت ولی یا سرپرست الزامی است.");
-      return;
-    }
+    <section class="section" id="courses">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">مسیرهای مهارت‌آموزی</p>
+          <h2>کلاس مورد علاقه‌ات را انتخاب کن</h2>
+          <p>یک مهارت تازه می‌تواند شروع یک مسیر بزرگ باشد.</p>
+        </div>
 
-    const selectedCourse = activeCourses.find(
-      course => String(course.id) === courseSelect.value
-    );
+        <div class="courses-grid" id="course-grid" aria-live="polite">
+          <article class="course-card">
+            <div class="course-art"><div class="course-icon">⚡</div></div>
+            <div class="course-body">
+              <span class="course-tag">مهارت‌آموزی</span>
+              <h3>در حال دریافت کلاس‌ها…</h3>
+              <p>لطفاً چند لحظه صبر کنید.</p>
+            </div>
+          </article>
+        </div>
 
-    if (!selectedCourse) {
-      showMessage("لطفاً یکی از چهار کلاس را انتخاب کنید.");
-      return;
-    }
+        <p class="note">هزینه نهایی و تأیید ثبت‌نام پس از بررسی مسئولان اعلام می‌شود.</p>
+      </div>
+    </section>
 
-    const file = receiptInput?.files?.[0];
+    <section class="section section-white" id="groups">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">گروه‌های نوجوانان</p>
+          <h2>پایه‌ها و مربیان</h2>
+          <p>گروه‌بندی پایگاه نوجوانان متوسطه اول مسجد فائق</p>
+        </div>
 
-    if (!file) {
-      showMessage("لطفاً فیش واریزی را انتخاب کنید.");
-      receiptInput?.focus();
-      return;
-    }
+        <div class="schedule-cards">
+          <article class="group-card">
+            <h3>پایه هفتم</h3>
+            <p><strong>گروه شهید زین‌الدین ۱</strong></p>
+            <p>مربی: آقای بهمن‌آبادی</p>
+          </article>
 
-    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      showMessage("فیش باید JPG، PNG یا PDF باشد.");
-      return;
-    }
+          <article class="group-card">
+            <h3>پایه هفتم</h3>
+            <p><strong>گروه شهید زین‌الدین ۲</strong></p>
+            <p>مربی: آقای محسن‌زاده</p>
+          </article>
 
-    if (file.size > MAX_RECEIPT_SIZE) {
-      showMessage("حجم فیش نباید بیشتر از ۲ مگابایت باشد.");
-      return;
-    }
+          <article class="group-card">
+            <h3>پایه هشتم</h3>
+            <p><strong>گروه شهید عبدی ۱</strong></p>
+            <p>مربی: آقای رفوگران</p>
+          </article>
 
-    const studentField = document.getElementById("student_name");
-    const gradeField = document.getElementById("grade");
-    const phoneField = document.getElementById("phone");
-    const guardianField = document.getElementById("guardian_name");
+          <article class="group-card">
+            <h3>پایه هشتم</h3>
+            <p><strong>گروه شهید عبدی ۲</strong></p>
+            <p>مربی: آقای صالحی</p>
+          </article>
 
-    if (!studentField || !gradeField || !phoneField || !guardianField) {
-      showMessage("یکی از فیلدهای فرم پیدا نشد.");
-      return;
-    }
+          <article class="group-card">
+            <h3>پایه نهم</h3>
+            <p><strong>گروه شهید هادی</strong></p>
+            <p>مربی: آقای رنج‌دست</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-    const record = {
-      student_name: studentField.value.trim(),
-      grade: gradeField.value.trim(),
-      phone: phoneField.value.trim(),
-      guardian_name: guardianField.value.trim(),
-      course_id: selectedCourse.id,
-      guardian_consent: true
-    };
+    <section class="section" id="schedule">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">زمان‌بندی</p>
+          <h2>برنامه هفتگی پایگاه</h2>
+          <p>پاییز و زمستان ۱۴۰۵ و بهار ۱۴۰۶</p>
+        </div>
 
-    if (
-      !record.student_name ||
-      !record.grade ||
-      !record.phone ||
-      !record.guardian_name
-    ) {
-      showMessage("لطفاً تمام اطلاعات ضروری را تکمیل کنید.");
-      return;
-    }
+        <div class="schedule-wrap">
+          <table class="schedule-table">
+            <thead>
+              <tr>
+                <th scope="col">پایه</th>
+                <th scope="col">نام گروه</th>
+                <th scope="col">مربی</th>
+                <th scope="col">روز و ساعت</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>هفتم</td>
+                <td>شهید زین‌الدین ۱</td>
+                <td>آقای بهمن‌آبادی</td>
+                <td>طبق جدول زمان‌بندی مصوب</td>
+              </tr>
+              <tr>
+                <td>هفتم</td>
+                <td>شهید زین‌الدین ۲</td>
+                <td>آقای محسن‌زاده</td>
+                <td>طبق جدول زمان‌بندی مصوب</td>
+              </tr>
+              <tr>
+                <td>هشتم</td>
+                <td>شهید عبدی ۱</td>
+                <td>آقای رفوگران</td>
+                <td>طبق جدول زمان‌بندی مصوب</td>
+              </tr>
+              <tr>
+                <td>هشتم</td>
+                <td>شهید عبدی ۲</td>
+                <td>آقای صالحی</td>
+                <td>طبق جدول زمان‌بندی مصوب</td>
+              </tr>
+              <tr>
+                <td>نهم</td>
+                <td>شهید هادی</td>
+                <td>آقای رنج‌دست</td>
+                <td>طبق جدول زمان‌بندی مصوب</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-    isSubmitting = true;
-    if (submitButton) submitButton.disabled = true;
+        <p class="schedule-note">
+          نام گروه‌ها و مربیان درج شده است؛ روزها و ساعت‌های دقیق تا بررسی جدول اصلی به‌صورت قطعی درج نشده‌اند.
+        </p>
+      </div>
+    </section>
 
-    let supabaseSaved = false;
+    <section class="section section-white" id="register">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">شروع مسیر جدید</p>
+          <h2>ثبت‌نام در کلاس‌های مهارتی</h2>
+          <p>اطلاعات را با دقت وارد کنید تا مسئولان دوره بتوانند پیگیری کنند.</p>
+        </div>
 
-    try {
-      showMessage("در حال ثبت اطلاعات...");
+        <div class="register-grid">
+          <aside class="register-info">
+            <h3>قبل از ثبت‌نام</h3>
+            <p>
+              انتخاب دوره، ثبت اطلاعات صحیح و هماهنگی با خانواده به انجام بهتر
+              فرایند ثبت‌نام کمک می‌کند.
+            </p>
+            <ul class="rule-list">
+              <li>نام و نام خانوادگی را کامل وارد کنید.</li>
+              <li>شماره تماس معتبر ارائه دهید.</li>
+              <li>پایه تحصیلی را درست انتخاب کنید.</li>
+              <li>فیش پرداختی را در صورت پرداخت هزینه دوره بارگذاری کنید.</li>
+              <li>ارسال فرم به‌تنهایی به معنای تأیید نهایی حضور نیست.</li>
+            </ul>
+          </aside>
 
-      const { error: insertError } = await supabaseClient
-        .from("registrations")
-        .insert([record]);
+          <form id="registration-form" class="register-form">
+            <h3>فرم ثبت‌نام</h3>
+            <p class="form-intro">همه فیلدهای ضروری را تکمیل کنید.</p>
 
-      if (insertError) throw insertError;
+            <div class="form-grid">
+              <div class="field field-full">
+                <label for="student_name">نام و نام خانوادگی نوجوان</label>
+                <input
+                  id="student_name"
+                  name="student_name"
+                  type="text"
+                  autocomplete="name"
+                  placeholder="نام و نام خانوادگی"
+                  required
+                >
+              </div>
 
-      supabaseSaved = true;
+              <div class="field">
+                <label for="grade">پایه تحصیلی</label>
+                <select id="grade" name="grade" required>
+                  <option value="">انتخاب پایه</option>
+                  <option value="هفتم">هفتم</option>
+                  <option value="هشتم">هشتم</option>
+                  <option value="نهم">نهم</option>
+                  <option value="دهم">دهم</option>
+                  <option value="یازدهم">یازدهم</option>
+                  <option value="دوازدهم">دوازدهم</option>
+                  <option value="سایر">سایر</option>
+                </select>
+              </div>
 
-      showMessage("اطلاعات ثبت شد؛ در حال ارسال فیش به گوگل‌شیت...");
+              <div class="field">
+                <label for="phone">شماره تماس</label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  inputmode="tel"
+                  autocomplete="tel"
+                  placeholder="شماره تماس قابل پیگیری"
+                  required
+                >
+              </div>
 
-      const receiptBase64 = await fileToBase64(file);
+              <div class="field field-full">
+                <label for="guardian_name">نام و نام خانوادگی والد یا سرپرست</label>
+                <input
+                  id="guardian_name"
+                  name="guardian_name"
+                  type="text"
+                  placeholder="نام والد یا سرپرست"
+                  required
+                >
+              </div>
 
-      await fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        },
-        body: JSON.stringify({
-          ...record,
-          course_title: selectedCourse.title,
-          registration_id: "",
-          receipt_name: file.name,
-          receipt_mime_type: file.type,
-          receipt_base64: receiptBase64
-        })
-      });
+              <div class="field field-full">
+                <label for="course_id">دوره موردنظر</label>
+                <select id="course_id" name="course_id" required>
+                  <option value="">در حال دریافت فهرست کلاس‌ها…</option>
+                </select>
+              </div>
 
-      form.reset();
+              <div class="field field-full">
+                <label for="receipt_file">فیش واریزی (در صورت پرداخت)</label>
+                <input
+                  id="receipt_file"
+                  name="receipt_file"
+                  type="file"
+                  accept="image/jpeg,image/png,application/pdf"
+                >
+                <small>
+                  فرمت مجاز JPG، PNG یا PDF؛ حداکثر ۲ مگابایت.
+                  اگر هنوز پرداخت نکرده‌اید، این بخش را خالی بگذارید.
+                </small>
+              </div>
 
-      showMessage(
-        "اطلاعات در Supabase ثبت شد و درخواست ارسال به گوگل‌شیت انجام شد. " +
-        "برای اطمینان، برگه ثبت‌نام‌ها و پوشه فیش‌ها را بررسی کنید."
-      );
+              <div class="field field-full">
+                <label class="consent" for="guardian_consent">
+                  <input
+                    id="guardian_consent"
+                    name="guardian_consent"
+                    type="checkbox"
+                    required
+                  >
+                  <span>
+                    تأیید می‌کنم والد یا سرپرست از ثبت‌نام آگاه است
+                    و اطلاعات واردشده صحیح است.
+                  </span>
+                </label>
+              </div>
+            </div>
 
-    } catch (error) {
-      console.error("خطای ثبت‌نام:", error);
+            <button class="btn btn-green form-submit" type="submit">
+              ارسال درخواست ثبت‌نام
+            </button>
 
-      if (supabaseSaved) {
-        showMessage(
-          "اطلاعات در Supabase ثبت شده، اما ارسال فیش یا گوگل‌شیت قطعی نیست. " +
-          "قبل از ارسال دوباره، برگه ثبت‌نام‌ها را بررسی کنید."
-        );
-      } else {
-        showMessage(
-          "ثبت اطلاعات در Supabase ناموفق بود. تنظیمات دسترسی جدول registrations را بررسی کنید."
-        );
-      }
+            <div id="form-message" class="form-message" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
 
-    } finally {
-      isSubmitting = false;
-      if (submitButton) submitButton.disabled = false;
-    }
-  });
-}
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <h2 class="footer-title">پایگاه مهارت‌آموزی نوجوانان مسجد فائق</h2>
+        <p>محیطی برای یادگیری، رشد استعدادها و خدمت.</p>
+      </div>
+      <nav class="footer-links" aria-label="پیوندهای پایین صفحه">
+        <a href="#home">صفحه اصلی</a>
+        <a href="#courses">کلاس‌ها</a>
+        <a href="#groups">گروه‌ها</a>
+        <a href="#schedule">برنامه</a>
+        <a href="#register">ثبت‌نام</a>
+      </nav>
+    </div>
+  </footer>
 
-startRegistrationApp();
-
-        
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
