@@ -1,3 +1,4 @@
+
 "use strict";
 
 (() => {
@@ -5,6 +6,7 @@
     "https://script.google.com/macros/s/AKfycbxnveLjHuRJN3-X6BBeVn_X26hRUU0K2Ou_-CrX5m8ZjDoy0UX55RjoGwUxrOc5Fl3N/exec";
 
   const MAX_RECEIPT_SIZE = 2 * 1024 * 1024;
+
   const ALLOWED_FILE_TYPES = [
     "image/jpeg",
     "image/png",
@@ -22,8 +24,6 @@
   let activeCourses = [];
   let isSubmitting = false;
 
-  // فهرست پشتیبان برای نمایش کلاس‌ها در صورت اختلال اتصال.
-  // ثبت‌نام آنلاین بدون اتصال موفق به Supabase انجام نمی‌شود.
   const fallbackCourses = [
     {
       title: "فتوشاپ",
@@ -59,9 +59,7 @@
   }
 
   function formatToman(value) {
-    const amount = Number(value || 0);
-
-    return `${amount.toLocaleString("fa-IR")} تومان`;
+    return `${Number(value || 0).toLocaleString("fa-IR")} تومان`;
   }
 
   function normalizeTitle(value) {
@@ -77,7 +75,6 @@
     if (title.includes("فتوشاپ")) return "✎";
     if (title.includes("رسانه")) return "▣";
     if (title.includes("خوشنویسی")) return "✒";
-
     return "✦";
   }
 
@@ -86,7 +83,6 @@
     if (title.includes("فتوشاپ")) return "مهارت دیجیتال";
     if (title.includes("رسانه")) return "سواد و تفکر";
     if (title.includes("خوشنویسی")) return "هنر و نوشتار";
-
     return "مهارت‌آموزی";
   }
 
@@ -107,7 +103,6 @@
     if (!courseSelect) return;
 
     const oldValue = courseSelect.value;
-
     courseSelect.replaceChildren();
 
     const placeholder = document.createElement("option");
@@ -254,8 +249,7 @@
       renderCourses();
 
       setMessage(
-        "کلاس‌ها به‌صورت نمایشی نمایش داده شده‌اند؛ " +
-        "اتصال پایگاه داده تنظیم نیست و ثبت‌نام آنلاین فعال نیست.",
+        "اتصال پایگاه داده تنظیم نشده است؛ ثبت‌نام آنلاین فعال نیست.",
         "error"
       );
 
@@ -287,9 +281,7 @@
         }));
 
         setMessage(
-          "در جدول courses کلاس فعالی پیدا نشد. " +
-          "فهرست نمایشی نشان داده شده؛ برای ثبت‌نام آنلاین، " +
-          "کلاس‌های فعال Supabase را بررسی کنید.",
+          "کلاس فعالی در پایگاه داده پیدا نشد. کلاس‌های نمایشی هستند و ثبت‌نام آنلاین فعال نیست.",
           "error"
         );
       }
@@ -308,36 +300,27 @@
       renderCourses();
 
       setMessage(
-        "اتصال به فهرست کلاس‌ها برقرار نشد. " +
-        "کلاس‌ها فقط به‌صورت نمایشی نشان داده شده‌اند؛ " +
-        "ثبت‌نام آنلاین تا رفع خطا انجام نمی‌شود.",
+        "اتصال به فهرست کلاس‌ها برقرار نشد؛ ثبت‌نام آنلاین فعال نیست.",
         "error"
       );
     }
   }
 
   function validateForm() {
-    if (!form || !form.reportValidity()) {
-      return false;
-    }
+    if (!form || !form.reportValidity()) return false;
 
     const consent = document.getElementById("guardian_consent");
 
     if (!consent?.checked) {
-      setMessage(
-        "تأیید والد یا سرپرست الزامی است.",
-        "error"
-      );
-
+      setMessage("تأیید والد یا سرپرست الزامی است.", "error");
       return false;
     }
 
     if (!supabaseClient) {
       setMessage(
-        "اتصال ثبت‌نام فعال نیست. تنظیمات config.js و اتصال Supabase را بررسی کنید.",
+        "اتصال ثبت‌نام فعال نیست. تنظیمات config.js و Supabase را بررسی کنید.",
         "error"
       );
-
       return false;
     }
 
@@ -348,7 +331,6 @@
         "لطفاً یک کلاس فعال از فهرست سامانه انتخاب کنید.",
         "error"
       );
-
       return false;
     }
 
@@ -356,20 +338,12 @@
 
     if (file) {
       if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-        setMessage(
-          "فیش باید JPG، PNG یا PDF باشد.",
-          "error"
-        );
-
+        setMessage("فیش باید JPG، PNG یا PDF باشد.", "error");
         return false;
       }
 
       if (file.size > MAX_RECEIPT_SIZE) {
-        setMessage(
-          "حجم فیش نباید بیشتر از ۲ مگابایت باشد.",
-          "error"
-        );
-
+        setMessage("حجم فیش نباید بیشتر از ۲ مگابایت باشد.", "error");
         return false;
       }
     }
@@ -388,16 +362,12 @@
     const record = {
       student_name:
         document.getElementById("student_name")?.value.trim() || "",
-
       grade:
         document.getElementById("grade")?.value || "",
-
       phone:
         document.getElementById("phone")?.value.trim() || "",
-
       guardian_name:
         document.getElementById("guardian_name")?.value.trim() || "",
-
       course_id: Number(course.id),
       guardian_consent: true
     };
@@ -408,19 +378,13 @@
       !record.phone ||
       !record.guardian_name
     ) {
-      setMessage(
-        "لطفاً همه اطلاعات ضروری را تکمیل کنید.",
-        "error"
-      );
-
+      setMessage("لطفاً همه اطلاعات ضروری را تکمیل کنید.", "error");
       return;
     }
 
     isSubmitting = true;
 
-    if (submitButton) {
-      submitButton.disabled = true;
-    }
+    if (submitButton) submitButton.disabled = true;
 
     setMessage(
       "در حال ثبت اطلاعات؛ لطفاً صفحه را نبندید.",
@@ -428,91 +392,84 @@
     );
 
     try {
+      // گام اول: ثبت اطلاعات در Supabase
       const { error: insertError } = await supabaseClient
         .from("registrations")
         .insert([record]);
 
       if (insertError) {
-        console.error(
-          "خطای ثبت در Supabase:",
-          insertError
-        );
+        console.error("خطای ثبت در Supabase:", insertError);
 
         setMessage(
-          "ثبت‌نام در پایگاه داده انجام نشد. " +
-          "تنظیمات دسترسی (RLS) و ستون‌های جدول registrations را بررسی کنید.",
+          "ثبت‌نام در پایگاه داده انجام نشد. ستون‌های جدول registrations و دسترسی RLS را بررسی کنید.",
           "error"
         );
 
         return;
       }
 
+      // گام دوم: آماده‌سازی اطلاعات برای Google Sheets
+      const payload = {
+        student_name: record.student_name,
+        grade: record.grade,
+        phone: record.phone,
+        guardian_name: record.guardian_name,
+        course_id: record.course_id,
+        course_title: course.title,
+        registration_id: "",
+        receipt_name: "",
+        receipt_mime_type: "",
+        receipt_base64: ""
+      };
+
+      // اگر فیش انتخاب شده باشد، آن را نیز به payload اضافه می‌کنیم.
       if (file) {
         setMessage(
-          "اطلاعات ثبت شد؛ در حال ارسال فیش به سامانه دریافت فیش‌ها…",
+          "اطلاعات ثبت شد؛ در حال آماده‌سازی فیش پرداخت…",
           "info"
         );
 
-        const receiptBase64 = await fileToBase64(file);
-
-        const payload = {
-          ...record,
-          registration_id: "",
-          course_title: course.title,
-          receipt_name: file.name,
-          receipt_mime_type: file.type,
-          receipt_base64: receiptBase64
-        };
-
-        /*
-         * حالت no-cors پاسخ Apps Script را برای جاوااسکریپت
-         * قابل‌خواندن نمی‌کند. پس ارسال درخواست با تأیید قطعی
-         * ذخیره‌شدن فایل در Drive یکسان نیست.
-         */
-        await fetch(APPS_SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(payload)
-        });
-
-        form.reset();
-
-        setMessage(
-          "درخواست ثبت‌نام در پایگاه داده ذخیره شد و درخواست ارسال فیش نیز ارسال شد. " +
-          "برای تأیید قطعی ذخیره فیش، Google Sheets و Google Drive را بررسی کنید.",
-          "success"
-        );
-      } else {
-        form.reset();
-
-        setMessage(
-          "درخواست ثبت‌نام در پایگاه داده ذخیره شد. " +
-          "چون فیشی بارگذاری نکردید، فیشی ارسال نشد؛ " +
-          "مسئولان دوره برای ادامه فرایند هماهنگ می‌کنند.",
-          "success"
-        );
+        payload.receipt_base64 = await fileToBase64(file);
+        payload.receipt_name = file.name;
+        payload.receipt_mime_type = file.type;
       }
+
+      // گام سوم: ارسال به Apps Script در هر دو حالتِ با فیش و بدون فیش.
+      setMessage(
+        "در حال ارسال اطلاعات به گوگل‌شیت؛ لطفاً صفحه را نبندید.",
+        "info"
+      );
+
+      await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      form.reset();
 
       if (courseSelect) {
         courseSelect.selectedIndex = 0;
       }
-    } catch (error) {
-      console.error("خطای ثبت‌نام:", error);
 
       setMessage(
-        "هنگام ارسال اطلاعات مشکلی پیش آمد. " +
-        "پیش از ارسال دوباره، جدول registrations را بررسی کنید تا ثبت تکراری رخ ندهد.",
+        "ثبت‌نام در پایگاه داده ذخیره شد و درخواست ارسال اطلاعات به گوگل‌شیت نیز فرستاده شد. لطفاً برای اطمینان، برگه ثبت‌نام‌ها را بررسی کنید.",
+        "success"
+      );
+    } catch (error) {
+      console.error("خطای ثبت‌نام یا ارسال به گوگل‌شیت:", error);
+
+      setMessage(
+        "ثبت یا ارسال اطلاعات با خطا مواجه شد. قبل از تلاش دوباره، Supabase و گوگل‌شیت را بررسی کنید تا ثبت تکراری ایجاد نشود.",
         "error"
       );
     } finally {
       isSubmitting = false;
 
-      if (submitButton) {
-        submitButton.disabled = false;
-      }
+      if (submitButton) submitButton.disabled = false;
     }
   }
 
@@ -521,7 +478,6 @@
       console.error(
         "اجزای ضروری فرم یا فهرست کلاس‌ها در index.html پیدا نشدند."
       );
-
       return;
     }
 
