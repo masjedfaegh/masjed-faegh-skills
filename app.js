@@ -1,100 +1,113 @@
-
 "use strict";
 
-const form = document.getElementById("registration-form");
-const courseSelect = document.getElementById("course_id");
-const message = document.getElementById("form-message");
-const courseGrid = document.getElementById("course-grid");
+(() => {
+  const APPS_SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbxnveLjHuRJN3-X6BBeVn_X26hRUU0K2Ou_-CrX5m8ZjDoy0UX55RjoGwUxrOc5Fl3N/exec";
 
-const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxnveLjHuRJN3-X6BBeVn_X26hRUU0K2Ou_-CrX5m8ZjDoy0UX55RjoGwUxrOc5Fl3N/exec";
+  const MAX_RECEIPT_SIZE = 2 * 1024 * 1024;
+  const ALLOWED_FILE_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "application/pdf"
+  ];
 
-const MAX_RECEIPT_SIZE = 2 * 1024 * 1024;
-const ALLOWED_FILE_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "application/pdf"
-];
+  const form = document.getElementById("registration-form");
+  const courseSelect = document.getElementById("course_id");
+  const message = document.getElementById("form-message");
+  const courseGrid = document.getElementById("course-grid");
+  const receiptInput = document.getElementById("receipt_file");
+  const submitButton = form?.querySelector('[type="submit"]');
 
-let activeCourses = [];
-let isSubmitting = false;
+  let supabaseClient = null;
+  let activeCourses = [];
+  let isSubmitting = false;
 
-function showMessage(text) {
-  if (message) message.textContent = text;
-}
+  // فهرست پشتیبان برای نمایش کلاس‌ها در صورت اختلال اتصال.
+  // ثبت‌نام آنلاین بدون اتصال موفق به Supabase انجام نمی‌شود.
+  const fallbackCourses = [
+    {
+      title: "فتوشاپ",
+      price_toman: 1500000,
+      description:
+        "آشنایی با طراحی گرافیکی و ابزارهای کاربردی برای خلق آثار تصویری."
+    },
+    {
+      title: "سواد رسانه",
+      price_toman: 1500000,
+      description:
+        "تقویت نگاه نقادانه و توانایی فهم و ارزیابی پیام‌های رسانه‌ای."
+    },
+    {
+      title: "نئون فلکسی",
+      price_toman: 2000000,
+      description:
+        "آشنایی با ساخت طرح‌های نوری و تجربه یک مهارت فنی و خلاقانه."
+    },
+    {
+      title: "خوشنویسی",
+      price_toman: 1500000,
+      description:
+        "تمرین خوش‌نویسی، دقت و زیبایی در نوشتار."
+    }
+  ];
 
-function formatToman(value) {
-  return Number(value || 0).toLocaleString("fa-IR") + " تومان";
-}
+  function setMessage(text, kind = "info") {
+    if (!message) return;
 
-function getCourseIcon(title = "") {
-  if (title.includes("نئون")) return "💡";
-  if (title.includes("فتوشاپ")) return "🎨";
-  if (title.includes("مداحی") || title.includes("سرود")) return "🎙️";
-  return "📘";
-}
-
-function getOrCreateReceiptInput() {
-  let input = document.getElementById("receipt_file");
-  if (input || !form) return input;
-
-  const wrapper = document.createElement("div");
-  wrapper.className = "form-group";
-
-  const label = document.createElement("label");
-  label.htmlFor = "receipt_file";
-  label.textContent = "تصویر یا PDF فیش واریزی";
-
-  input = document.createElement("input");
-  input.type = "file";
-  input.id = "receipt_file";
-  input.name = "receipt_file";
-  input.accept = ALLOWED_FILE_TYPES.join(",");
-  input.required = true;
-
-  const help = document.createElement("small");
-  help.textContent = "فرمت مجاز JPG، PNG یا PDF؛ حداکثر ۲ مگابایت.";
-
-  wrapper.append(label, input, help);
-
-  const consent = document.getElementById("guardian_consent");
-  const consentWrapper =
-    consent?.closest(".form-group") || consent?.parentElement;
-
-  if (consentWrapper && consentWrapper.parentElement === form) {
-    form.insertBefore(wrapper, consentWrapper);
-  } else {
-    form.appendChild(wrapper);
+    message.textContent = text;
+    message.dataset.kind = kind;
   }
 
-  return input;
-}
+  function formatToman(value) {
+    const amount = Number(value || 0);
 
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+    return `${amount.toLocaleString("fa-IR")} تومان`;
+  }
 
-    reader.onload = () => {
-      const result = String(reader.result || "");
-      const commaIndex = result.indexOf(",");
+  function normalizeTitle(value) {
+    return String(value || "")
+      .replace(/\u200c/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
 
-      if (commaIndex < 0) {
-        reject(new Error("خواندن فایل فیش ناموفق بود."));
-        return;
-      }
+  function iconFor(title = "") {
+    if (title.includes("نئون")) return "⚡";
+    if (title.includes("فتوشاپ")) return "✎";
+    if (title.includes("رسانه")) return "▣";
+    if (title.includes("خوشنویسی")) return "✒";
 
-      resolve(result.slice(commaIndex + 1));
-    };
+    return "✦";
+  }
 
-    reader.onerror = () =>
-      reject(new Error("خواندن فایل فیش ناموفق بود."));
+  function tagFor(title = "") {
+    if (title.includes("نئون")) return "مهارت فنی";
+    if (title.includes("فتوشاپ")) return "مهارت دیجیتال";
+    if (title.includes("رسانه")) return "سواد و تفکر";
+    if (title.includes("خوشنویسی")) return "هنر و نوشتار";
 
-    reader.readAsDataURL(file);
-  });
-}
+    return "مهارت‌آموزی";
+  }
 
-function renderCourses() {
-  if (courseSelect) {
+  function dedupeCourses(rows) {
+    const seen = new Set();
+
+    return (rows || []).filter((course) => {
+      const key = normalizeTitle(course.title);
+
+      if (!key || seen.has(key)) return false;
+
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function renderCourseOptions() {
+    if (!courseSelect) return;
+
+    const oldValue = courseSelect.value;
+
     courseSelect.replaceChildren();
 
     const placeholder = document.createElement("option");
@@ -102,148 +115,290 @@ function renderCourses() {
     placeholder.textContent = "کلاس موردنظر را انتخاب کنید";
     placeholder.disabled = true;
     placeholder.selected = true;
+
     courseSelect.appendChild(placeholder);
 
-    for (const course of activeCourses) {
+    activeCourses.forEach((course) => {
       const option = document.createElement("option");
-      option.value = String(course.id);
+
+      option.value = String(
+        course.id ?? `local:${normalizeTitle(course.title)}`
+      );
+
       option.textContent =
         `${course.title} — ${formatToman(course.price_toman)}`;
+
       courseSelect.appendChild(option);
-    }
-  }
-
-  if (!courseGrid) return;
-
-  courseGrid.replaceChildren();
-
-  for (const course of activeCourses) {
-    const card = document.createElement("article");
-    card.className = "course-card";
-
-    const icon = document.createElement("div");
-    icon.className = "course-icon";
-    icon.setAttribute("aria-hidden", "true");
-    icon.textContent = getCourseIcon(course.title);
-
-    const heading = document.createElement("h3");
-    heading.textContent = course.title || "کلاس آموزشی";
-
-    const description = document.createElement("p");
-    description.textContent =
-      course.description || "توضیحات این کلاس به‌زودی اضافه می‌شود.";
-
-    const price = document.createElement("p");
-    price.className = "course-price";
-    price.textContent = "هزینه: " + formatToman(course.price_toman);
-
-    const link = document.createElement("a");
-    link.className = "btn";
-    link.href = "#register";
-    link.textContent = "ثبت‌نام در این کلاس";
-
-    link.addEventListener("click", () => {
-      if (courseSelect) courseSelect.value = String(course.id);
     });
 
-    card.append(icon, heading, description, price, link);
-    courseGrid.appendChild(card);
-  }
-}
-
-async function startRegistrationApp() {
-  if (!form || !courseSelect || !message) {
-    console.error("فرم ثبت‌نام یا یکی از اجزای ضروری پیدا نشد.");
-    return;
-  }
-
-  if (
-    !window.supabase ||
-    !window.SUPABASE_URL ||
-    !window.SUPABASE_ANON_KEY
-  ) {
-    showMessage("اتصال سامانه تنظیم نشده است.");
-    return;
+    if (
+      oldValue &&
+      [...courseSelect.options].some(
+        (option) => option.value === oldValue
+      )
+    ) {
+      courseSelect.value = oldValue;
+    }
   }
 
-  const client = window.supabase.createClient(
-    window.SUPABASE_URL,
-    window.SUPABASE_ANON_KEY
-  );
+  function renderCourses() {
+    if (!courseGrid) return;
 
-  try {
-    const { data: courses, error } = await client
-      .from("courses")
-      .select("id, title, description, price_toman")
-      .eq("is_active", true)
-      .order("title");
+    courseGrid.replaceChildren();
 
-    if (error) throw error;
+    activeCourses.forEach((course) => {
+      const card = document.createElement("article");
+      card.className = "course-card";
 
-    activeCourses = courses || [];
-    renderCourses();
+      const art = document.createElement("div");
+      art.className = "course-art";
 
-    if (activeCourses.length === 0) {
-      showMessage("در حال حاضر کلاسی برای ثبت‌نام وجود ندارد.");
+      const icon = document.createElement("div");
+      icon.className = "course-icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.textContent = iconFor(course.title);
+
+      art.appendChild(icon);
+
+      const body = document.createElement("div");
+      body.className = "course-body";
+
+      const tag = document.createElement("span");
+      tag.className = "course-tag";
+      tag.textContent = tagFor(course.title);
+
+      const heading = document.createElement("h3");
+      heading.textContent = course.title || "کلاس مهارتی";
+
+      const description = document.createElement("p");
+      description.textContent =
+        course.description ||
+        "برای دریافت جزئیات و زمان برگزاری با مسئول پایگاه هماهنگ می‌شود.";
+
+      const price = document.createElement("p");
+      price.className = "course-price";
+      price.textContent =
+        `هزینه: ${formatToman(course.price_toman)}`;
+
+      const link = document.createElement("a");
+      link.className = "btn btn-green";
+      link.href = "#register";
+      link.textContent = "ثبت‌نام در این کلاس";
+
+      link.addEventListener("click", () => {
+        if (!courseSelect) return;
+
+        courseSelect.value = String(
+          course.id ?? `local:${normalizeTitle(course.title)}`
+        );
+      });
+
+      body.append(tag, heading, description, price, link);
+      card.append(art, body);
+      courseGrid.appendChild(card);
+    });
+  }
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const result = String(reader.result || "");
+        const commaIndex = result.indexOf(",");
+
+        if (commaIndex < 0) {
+          reject(new Error("خواندن فایل فیش ناموفق بود."));
+          return;
+        }
+
+        resolve(result.slice(commaIndex + 1));
+      };
+
+      reader.onerror = () => {
+        reject(new Error("خواندن فایل فیش ناموفق بود."));
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function getSelectedCourse() {
+    const selectedValue = courseSelect?.value;
+
+    return activeCourses.find((course) => {
+      const courseValue = String(
+        course.id ?? `local:${normalizeTitle(course.title)}`
+      );
+
+      return courseValue === selectedValue;
+    });
+  }
+
+  async function loadCourses() {
+    if (!courseSelect || !courseGrid) return;
+
+    const configReady =
+      window.SUPABASE_URL &&
+      window.SUPABASE_ANON_KEY &&
+      window.supabase &&
+      typeof window.supabase.createClient === "function";
+
+    if (!configReady) {
+      activeCourses = fallbackCourses.map((course) => ({
+        ...course,
+        id: `local:${normalizeTitle(course.title)}`
+      }));
+
+      renderCourseOptions();
+      renderCourses();
+
+      setMessage(
+        "کلاس‌ها به‌صورت نمایشی نمایش داده شده‌اند؛ " +
+        "اتصال پایگاه داده تنظیم نیست و ثبت‌نام آنلاین فعال نیست.",
+        "error"
+      );
+
       return;
     }
-  } catch (error) {
-    console.error("Course loading error:", error);
-    showMessage("دریافت کلاس‌ها ناموفق بود.");
-    return;
+
+    try {
+      supabaseClient = window.supabase.createClient(
+        window.SUPABASE_URL,
+        window.SUPABASE_ANON_KEY
+      );
+
+      const { data, error } = await supabaseClient
+        .from("courses")
+        .select("id,title,description,price_toman,is_active")
+        .eq("is_active", true)
+        .order("title", { ascending: true });
+
+      if (error) throw error;
+
+      const dbCourses = dedupeCourses(data || []);
+
+      if (dbCourses.length > 0) {
+        activeCourses = dbCourses;
+      } else {
+        activeCourses = fallbackCourses.map((course) => ({
+          ...course,
+          id: `local:${normalizeTitle(course.title)}`
+        }));
+
+        setMessage(
+          "در جدول courses کلاس فعالی پیدا نشد. " +
+          "فهرست نمایشی نشان داده شده؛ برای ثبت‌نام آنلاین، " +
+          "کلاس‌های فعال Supabase را بررسی کنید.",
+          "error"
+        );
+      }
+
+      renderCourseOptions();
+      renderCourses();
+    } catch (error) {
+      console.error("خطا در دریافت کلاس‌ها:", error);
+
+      activeCourses = fallbackCourses.map((course) => ({
+        ...course,
+        id: `local:${normalizeTitle(course.title)}`
+      }));
+
+      renderCourseOptions();
+      renderCourses();
+
+      setMessage(
+        "اتصال به فهرست کلاس‌ها برقرار نشد. " +
+        "کلاس‌ها فقط به‌صورت نمایشی نشان داده شده‌اند؛ " +
+        "ثبت‌نام آنلاین تا رفع خطا انجام نمی‌شود.",
+        "error"
+      );
+    }
   }
 
-  const receiptInput = getOrCreateReceiptInput();
-  const submitButton = form.querySelector('[type="submit"]');
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    if (isSubmitting) return;
-    if (!form.reportValidity()) return;
+  function validateForm() {
+    if (!form || !form.reportValidity()) {
+      return false;
+    }
 
     const consent = document.getElementById("guardian_consent");
 
     if (!consent?.checked) {
-      showMessage("رضایت ولی یا سرپرست الزامی است.");
-      return;
+      setMessage(
+        "تأیید والد یا سرپرست الزامی است.",
+        "error"
+      );
+
+      return false;
     }
 
-    const selectedCourse = activeCourses.find(
-      (course) => String(course.id) === courseSelect.value
-    );
+    if (!supabaseClient) {
+      setMessage(
+        "اتصال ثبت‌نام فعال نیست. تنظیمات config.js و اتصال Supabase را بررسی کنید.",
+        "error"
+      );
 
-    if (!selectedCourse) {
-      showMessage("لطفاً یک کلاس معتبر انتخاب کنید.");
-      return;
+      return false;
+    }
+
+    const course = getSelectedCourse();
+
+    if (!course || !Number.isInteger(Number(course.id))) {
+      setMessage(
+        "لطفاً یک کلاس فعال از فهرست سامانه انتخاب کنید.",
+        "error"
+      );
+
+      return false;
     }
 
     const file = receiptInput?.files?.[0];
 
-    if (!file) {
-      showMessage("لطفاً فیش واریزی را انتخاب کنید.");
-      receiptInput?.focus();
-      return;
+    if (file) {
+      if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+        setMessage(
+          "فیش باید JPG، PNG یا PDF باشد.",
+          "error"
+        );
+
+        return false;
+      }
+
+      if (file.size > MAX_RECEIPT_SIZE) {
+        setMessage(
+          "حجم فیش نباید بیشتر از ۲ مگابایت باشد.",
+          "error"
+        );
+
+        return false;
+      }
     }
 
-    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      showMessage("فیش باید JPG، PNG یا PDF باشد.");
-      return;
-    }
+    return true;
+  }
 
-    if (file.size > MAX_RECEIPT_SIZE) {
-      showMessage("حجم فیش نباید بیشتر از ۲ مگابایت باشد.");
-      return;
-    }
+  async function submitRegistration(event) {
+    event.preventDefault();
+
+    if (isSubmitting || !validateForm()) return;
+
+    const course = getSelectedCourse();
+    const file = receiptInput?.files?.[0] || null;
 
     const record = {
       student_name:
-        document.getElementById("student_name").value.trim(),
-      grade: document.getElementById("grade").value.trim(),
-      phone: document.getElementById("phone").value.trim(),
+        document.getElementById("student_name")?.value.trim() || "",
+
+      grade:
+        document.getElementById("grade")?.value || "",
+
+      phone:
+        document.getElementById("phone")?.value.trim() || "",
+
       guardian_name:
-        document.getElementById("guardian_name").value.trim(),
-      course_id: Number(selectedCourse.id),
+        document.getElementById("guardian_name")?.value.trim() || "",
+
+      course_id: Number(course.id),
       guardian_consent: true
     };
 
@@ -251,71 +406,132 @@ async function startRegistrationApp() {
       !record.student_name ||
       !record.grade ||
       !record.phone ||
-      !record.guardian_name ||
-      !Number.isInteger(record.course_id)
+      !record.guardian_name
     ) {
-      showMessage("لطفاً اطلاعات ضروری را به‌درستی تکمیل کنید.");
+      setMessage(
+        "لطفاً همه اطلاعات ضروری را تکمیل کنید.",
+        "error"
+      );
+
       return;
     }
 
     isSubmitting = true;
-    if (submitButton) submitButton.disabled = true;
 
-    showMessage("در حال ثبت اطلاعات؛ لطفاً صفحه را نبندید...");
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    setMessage(
+      "در حال ثبت اطلاعات؛ لطفاً صفحه را نبندید.",
+      "info"
+    );
 
     try {
-      // مرحله اول: ثبت اطلاعات در Supabase.
-      // عمداً از select() استفاده نمی‌کنیم؛ اطلاعات ثبت‌نام عمومی نیست.
-      const { error: insertError } = await client
+      const { error: insertError } = await supabaseClient
         .from("registrations")
         .insert([record]);
 
       if (insertError) {
-        console.error("Registration error:", insertError);
-        showMessage(
-          "ثبت‌نام در سامانه انجام نشد. خطای ثبت در Supabase را بررسی کنید."
+        console.error(
+          "خطای ثبت در Supabase:",
+          insertError
         );
+
+        setMessage(
+          "ثبت‌نام در پایگاه داده انجام نشد. " +
+          "تنظیمات دسترسی (RLS) و ستون‌های جدول registrations را بررسی کنید.",
+          "error"
+        );
+
         return;
       }
 
-      // مرحله دوم: آماده‌سازی و ارسال اطلاعات و فیش به Google Apps Script.
-      showMessage("ثبت‌نام ذخیره شد؛ در حال ارسال فیش...");
+      if (file) {
+        setMessage(
+          "اطلاعات ثبت شد؛ در حال ارسال فیش به سامانه دریافت فیش‌ها…",
+          "info"
+        );
 
-      const receiptBase64 = await fileToBase64(file);
+        const receiptBase64 = await fileToBase64(file);
 
-      await fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        },
-        body: JSON.stringify({
+        const payload = {
           ...record,
-          course_title: selectedCourse.title,
           registration_id: "",
+          course_title: course.title,
           receipt_name: file.name,
           receipt_mime_type: file.type,
           receipt_base64: receiptBase64
-        })
-      });
+        };
 
-      form.reset();
+        /*
+         * حالت no-cors پاسخ Apps Script را برای جاوااسکریپت
+         * قابل‌خواندن نمی‌کند. پس ارسال درخواست با تأیید قطعی
+         * ذخیره‌شدن فایل در Drive یکسان نیست.
+         */
+        await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
+        });
 
-      showMessage(
-        "ثبت‌نام در سامانه ذخیره شد. درخواست ارسال فیش انجام شد؛ " +
-        "برای اطمینان از ذخیره فیش، Google Sheets و Google Drive را بررسی کنید."
-      );
+        form.reset();
+
+        setMessage(
+          "درخواست ثبت‌نام در پایگاه داده ذخیره شد و درخواست ارسال فیش نیز ارسال شد. " +
+          "برای تأیید قطعی ذخیره فیش، Google Sheets و Google Drive را بررسی کنید.",
+          "success"
+        );
+      } else {
+        form.reset();
+
+        setMessage(
+          "درخواست ثبت‌نام در پایگاه داده ذخیره شد. " +
+          "چون فیشی بارگذاری نکردید، فیشی ارسال نشد؛ " +
+          "مسئولان دوره برای ادامه فرایند هماهنگ می‌کنند.",
+          "success"
+        );
+      }
+
+      if (courseSelect) {
+        courseSelect.selectedIndex = 0;
+      }
     } catch (error) {
-      console.error("Submission error:", error);
-      showMessage(
-        "در ارسال اطلاعات یا فیش مشکلی پیش آمد. " +
-        "پیش از ارسال دوباره، جدول ثبت‌نام‌ها را بررسی کنید."
+      console.error("خطای ثبت‌نام:", error);
+
+      setMessage(
+        "هنگام ارسال اطلاعات مشکلی پیش آمد. " +
+        "پیش از ارسال دوباره، جدول registrations را بررسی کنید تا ثبت تکراری رخ ندهد.",
+        "error"
       );
     } finally {
       isSubmitting = false;
-      if (submitButton) submitButton.disabled = false;
-    }
-  });
-}
 
-startRegistrationApp();
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    }
+  }
+
+  function init() {
+    if (!form || !courseSelect || !message || !courseGrid) {
+      console.error(
+        "اجزای ضروری فرم یا فهرست کلاس‌ها در index.html پیدا نشدند."
+      );
+
+      return;
+    }
+
+    form.addEventListener("submit", submitRegistration);
+    loadCourses();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
